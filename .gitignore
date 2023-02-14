@@ -1,4 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# environment
+.env
+
+# project details
+project-details.txt
 
 # dependencies
 /node_modules
