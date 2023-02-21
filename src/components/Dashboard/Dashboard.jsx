@@ -3,7 +3,7 @@ import { NavLink, Route, Routes } from 'react-router-dom';
 import Header from '../Header';
 import { IoHome } from 'react-icons/io5';
 import { isActiveStyles, isNotActiveStyles } from '../../utils/styles';
-import { DashboardHome, DashboardSongs, DashboardUsers, DashboardArtists, DashboardAlbums } from './index';
+import { DashboardHome, DashboardSongs, DashboardUsers, DashboardArtists, DashboardAlbums, DashboardNewSong } from './index';
 
 const Dashboard = () => {
   return (
@@ -23,7 +23,7 @@ const Dashboard = () => {
           <Route path='/songs' element={<DashboardSongs />}></Route>
           <Route path='/artist' element={<DashboardArtists />}></Route>
           <Route path='/albums' element={<DashboardAlbums />}></Route>
-          <Route path='/newSong' element={<DashboardHome />}></Route>
+          <Route path='/newSong' element={<DashboardNewSong />}></Route>
         </Routes>
       </div>
     </div>
