@@ -1,6 +1,7 @@
 import initialUploadSongState from "./UploadSongInitialState";
 
 export const uploadSongActionType = {
+  SET_SONG_NAME: 'SET_SONG_NAME',
   SET_ARTIST_DROP_DOWN_SELECTION: 'SET_ARTIST_DROP_DOWN_SELECTION',
   SET_ALBUM_DROP_DOWN_SELECTION: 'SET_ALBUM_DROP_DOWN_SELECTION',
   SET_LANGUAGE_DROP_DOWN_SELECTION: 'SET_LANGUAGE_DROP_DOWN_SELECTION',
@@ -16,6 +17,11 @@ export const uploadSongActionType = {
 
 const uploadSongReducer = (state, action) => {
   switch(action.type) {
+    case uploadSongActionType.SET_SONG_NAME:
+      return {
+        ...state,
+        songName: action.songName
+      };
     case uploadSongActionType.SET_ARTIST_DROP_DOWN_SELECTION:
       return {
         ...state,
@@ -36,10 +42,6 @@ const uploadSongReducer = (state, action) => {
         ...state,
         categoryDropDownSelection: action.filterValue,
       };
-    case uploadSongActionType.CLEAR_ALL_SONG_FIELDS:
-      return {
-        ...initialUploadSongState
-      }
     case uploadSongActionType.SET_IMAGE_FILE_IS_LOADING:
       return {
         ...state,
@@ -69,6 +71,10 @@ const uploadSongReducer = (state, action) => {
       return {
         ...state,
         audioFileURL: action.audioFileURL
+      }
+    case uploadSongActionType.CLEAR_ALL_SONG_FIELDS:
+      return {
+        ...initialUploadSongState
       }
     default:
       throw new Error('Unknown action: ' + action.type);

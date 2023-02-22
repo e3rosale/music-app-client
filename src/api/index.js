@@ -68,3 +68,12 @@ export const deleteUser = async (userId) => {
     throw error;
   }
 }
+
+export const uploadSong = async (newSong) => {
+  try {
+    const res = await axios.post(`${baseURL}api/song/save`, { ...newSong });
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+};

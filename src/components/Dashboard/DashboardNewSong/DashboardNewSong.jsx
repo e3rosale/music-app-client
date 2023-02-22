@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useStateValue } from "../../../context/StateContext";
 import { filterByCategory, filterByLanguage } from "../../../utils/supportFunctions";
 import { FilterButtons } from "..";
-import { getAllAlbums, getAllArtists } from '../../../api';
+import { getAllAlbums, getAllArtists, getAllSongs, uploadSong } from '../../../api';
 import { actionType } from "../../../context/reducer";
 import { deleteObject, ref } from "firebase/storage";
 import { storage } from "../../../config/firebase.config";
@@ -13,10 +13,10 @@ import { uploadSongActionType } from "../../../context/UploadSongContext/UploadS
 import FileUploader from "./DashboardNewSongFileUploader";
 
 const DashboardNewSong = () => {
-  const [songName, setSongName] = useState("");
   const { state, dispatch } = useStateValue();
   const [
     {
+      songName,
       artistDropDownSelection,
       albumDropDownSelection,
       languageDropDownSelection,
@@ -83,13 +83,38 @@ const DashboardNewSong = () => {
       .catch(error => console.log(error));
   }
 
-  const saveSong = () => {
-    console.log('saving song');
+  const saveSong = async () => {
     setIsSavingSong(true);
+
+    const newSongToSave =  {
+      name: songName,
+      imageURL: imageFileURL,
+      songURL: audioFileURL,
+      album: albumDropDownSelection,
+      artist: artistDropDownSelection,
+      language: languageDropDownSelection,
+      category: categoryDropDownSelection,
+      twitter: "fake-twitter-link",
+      instagram: "fake-instagram-link"
+    };
+
+    try {
+      await uploadSong(newSongToSave);
+      setIsSavingSong(false);
+      uploadSongDispatch({ type: uploadSongActionType.CLEAR_ALL_SONG_FIELDS });
+
+      getAllSongs()
+        .then(songs => {
+          dispatch({ type: actionType.SET_ALL_SONGS, allSongs: songs.data });
+        })
+        .catch(error => console.log(error));
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const areAllSongFieldsPopulated = 
-    () => artistDropDownSelection && albumDropDownSelection && languageDropDownSelection && categoryDropDownSelection && imageFileURL && audioFileURL;
+    () => songName && artistDropDownSelection && languageDropDownSelection && categoryDropDownSelection && imageFileURL && audioFileURL;
 
   return (
     <div className="flex flex-col items-center justify-center p-4 border border-gray-300 rounded-md gap-4">
@@ -97,8 +122,8 @@ const DashboardNewSong = () => {
         type="text" 
         placeholder="Type your song name..." 
         className="w-full p-3 rounded-md text-base font-semibold text-textColor outline-none shadow-sm border border-gray-300 bg-transparent"
-        value={songName}
-        onChange={(e) => setSongName(e.target.value)}
+        value={songName ?? ""}
+        onChange={(e) => uploadSongDispatch({type: uploadSongActionType.SET_SONG_NAME, songName: e.target.value })}
       />
       <div className="flex w-full justify-between flex-wrap items-center gap-4">
         <FilterButtons filterData={state.allArtists} flag={"Artist"} />
