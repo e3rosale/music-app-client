@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { IoChevronDown } from 'react-icons/io5';
 import { motion } from 'framer-motion';
-import { useUploadSongState } from '../../context/UploadSongContext/UploadSongStateContext';
-import { uploadSongActionType } from '../../context/UploadSongContext/UploadSongReducer';
+import { useUploadSongState } from '../../../context/UploadSongContext/UploadSongStateContext';
+import { uploadSongActionType } from '../../../context/UploadSongContext/UploadSongReducer';
 
 const FilterButtons = ({ filterData, flag }) => {
   const [isDropDownMenuOpen, setIsDropDownMenuOpen] = useState(false);

@@ -1,31 +1,37 @@
 import React, { useState, useEffect } from "react";
-import { useStateValue } from "../../context/StateContext";
-import { filterByCategory, filterByLanguage } from "../../utils/supportFunctions";
-import { FilterButtons } from "../Dashboard";
-import { getAllAlbums, getAllArtists } from '../../api';
-import { actionType } from "../../context/reducer";
-import { BiCloudUpload } from "react-icons/bi";
-import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { storage } from "../../config/firebase.config";
+import { useStateValue } from "../../../context/StateContext";
+import { filterByCategory, filterByLanguage } from "../../../utils/supportFunctions";
+import { FilterButtons } from "..";
+import { getAllAlbums, getAllArtists } from '../../../api';
+import { actionType } from "../../../context/reducer";
+import { deleteObject, ref } from "firebase/storage";
+import { storage } from "../../../config/firebase.config";
 import { MdDelete } from "react-icons/md";
 import { motion } from 'framer-motion';
-import { useUploadSongState } from "../../context/UploadSongContext/UploadSongStateContext";
-import { uploadSongActionType } from "../../context/UploadSongContext/UploadSongReducer";
+import { useUploadSongState } from "../../../context/UploadSongContext/UploadSongStateContext";
+import { uploadSongActionType } from "../../../context/UploadSongContext/UploadSongReducer";
+import FileUploader from "./DashboardNewSongFileUploader";
 
 const DashboardNewSong = () => {
   const [songName, setSongName] = useState("");
   const { state, dispatch } = useStateValue();
-  const [_, uploadSongDispatch] = useUploadSongState();
+  const [
+    {
+      artistDropDownSelection,
+      albumDropDownSelection,
+      languageDropDownSelection,
+      categoryDropDownSelection,
+      imageFileIsLoading,
+      imageFileLoadingProgress,
+      imageFileURL,
+      audioFileIsLoading,
+      audioFileLoadingProgress,
+      audioFileURL,
+    }, 
+    uploadSongDispatch
+  ] = useUploadSongState();
 
   const [isSavingSong, setIsSavingSong] = useState(false);
-
-  const [isImageLoading, setIsImageLoading] = useState(false);
-  const [songImageUploadingStatus, setSongImageUploadingStatus] = useState(0);
-  const [songImageUploadURL, setSongImageUploadURL] = useState(null);
-
-  const [isAudioLoading, setIsAudioLoading] = useState(false);
-  const [songAudioUploadingStatus, setSongAudioUploadingStatus] = useState(0);
-  const [songAudioUploadURL, setSongAudioUploadURL] = useState(null);
 
   useEffect(() => {
     if (state.allArtists === null) {
@@ -45,16 +51,34 @@ const DashboardNewSong = () => {
     }
   }, []);
 
-  const deleteUploadedFile = (uploadFileURL, setIsFileLoading, setFileUploadURL, setFileUploadingStatus) => {
-    setIsFileLoading(true);
-    setFileUploadingStatus(0);
+  const deleteUploadedFile = (fileType) => {
+    let uploadFileURL;
+    if (fileType === "image") {
+      uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_IS_LOADING, imageFileIsLoading: true });
+      uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_LOADING_PROGRESS, imageFileLoadingProgress: 0 });
+      uploadFileURL = imageFileURL;
+    }
+
+    if (fileType === "audio") {
+      uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_IS_LOADING, audioFileIsLoading: true });
+      uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_LOADING_PROGRESS, audioFileLoadingProgress: 0 });
+      uploadFileURL = audioFileURL;
+    }
+
     const targetFileRef = ref(storage, uploadFileURL);
 
     // delete the file
     deleteObject(targetFileRef)
       .then(() => {
-        setIsFileLoading(false);
-        setFileUploadURL(null);
+        if (fileType === "image") {
+          uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_IS_LOADING, imageFileIsLoading: false });
+          uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_URL, imageFileURL: null });
+        }
+
+        if (fileType === "audio") {
+          uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_IS_LOADING, audioFileIsLoading: false });
+          uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_URL, audioFileURL: null });
+        }
       })
       .catch(error => console.log(error));
   }
@@ -64,9 +88,8 @@ const DashboardNewSong = () => {
     setIsSavingSong(true);
   }
 
-  const areAllSongFieldsPopulated = () => {
-    return false;
-  }
+  const areAllSongFieldsPopulated = 
+    () => artistDropDownSelection && albumDropDownSelection && languageDropDownSelection && categoryDropDownSelection && imageFileURL && audioFileURL;
 
   return (
     <div className="flex flex-col items-center justify-center p-4 border border-gray-300 rounded-md gap-4">
@@ -84,40 +107,42 @@ const DashboardNewSong = () => {
         <FilterButtons filterData={filterByCategory} flag={"Category"} />
       </div>
       <div className="bg-card backdrop-blur-md w-full h-300 rounded-md border-2 border-dotted border-gray-300 cursor-pointer">
-        {isImageLoading && <FileLoader progress={songImageUploadingStatus} />}
-        {!isImageLoading && (
+        {imageFileIsLoading && <FileLoader progress={imageFileLoadingProgress} />}
+        {!imageFileIsLoading && (
           <>
-            {songImageUploadURL ?
+            {imageFileURL ?
               <div className="relative w-full h-full overflow-hidden rounded-md">
-                <img src={songImageUploadURL} className="w-full h-full object-cover" alt="song image upload"/>
+                <img src={imageFileURL} className="w-full h-full object-cover" alt="song image upload"/>
                 <button
                   type="button"
                   className="absolute bottom-3 right-3 p-3 rounded-full bg-red-500 text-xl cursor-pointer outline-none border-none hover:shadow-md duration-200 transition-all ease-in-out"
-                  onClick={() => deleteUploadedFile(songImageUploadURL, setIsImageLoading, setSongImageUploadURL, setSongImageUploadingStatus)}
+                  onClick={() => deleteUploadedFile("image")}
                 >
                   <MdDelete className="text-white" />
                 </button>
               </div> : 
-              <FileUploader fileType={"image"} setIsFileLoading={setIsImageLoading} setFileUploadingStatus={setSongImageUploadingStatus} setFileUploadURL={setSongImageUploadURL} />}
+              <FileUploader fileType={"image"} />
+            }
           </>
         )}
       </div>
       <div className="bg-card backdrop-blur-md w-full h-300 rounded-md border-2 border-dotted border-gray-300 cursor-pointer">
-        {isAudioLoading && <FileLoader progress={songAudioUploadingStatus} />}
-        {!isAudioLoading && (
+        {audioFileIsLoading && <FileLoader progress={audioFileLoadingProgress} />}
+        {!audioFileIsLoading && (
           <>
-            {songAudioUploadURL ? 
+            {audioFileURL ? 
               <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-md">
-                <audio controls src={songAudioUploadURL} />
+                <audio controls src={audioFileURL} />
                 <button
                   type="button"
                   className="absolute bottom-3 right-3 p-3 rounded-full bg-red-500 text-xl cursor-pointer outline-none border-none hover:shadow-md duration-200 transition-all ease-in-out"
-                  onClick={() => deleteUploadedFile(songAudioUploadURL, setIsAudioLoading, setSongAudioUploadURL, setSongAudioUploadingStatus)}
+                  onClick={() => deleteUploadedFile("audio")}
                 >
                   <MdDelete className="text-white" />
                 </button>
               </div> : 
-              <FileUploader fileType={"audio"} setIsFileLoading={setIsAudioLoading} setFileUploadingStatus={setSongAudioUploadingStatus} setFileUploadURL={setSongAudioUploadURL}/>}
+              <FileUploader fileType={"audio"}/>
+            }
           </>
         )}
       </div>
@@ -142,85 +167,8 @@ const FileLoader = ({ progress }) => {
         <div className="absolute inset-0 rounded-full bg-red-600 blur-xl"></div>
       </div>
     </div>
-  )
-};
-
-export const FileUploader = ({ fileType, setIsFileLoading, setFileUploadingStatus, setFileUploadURL }) => {
-  let fileTypeText;
-  let inputTypeAcceptAttributes;
-  let storagePath;
-
-  switch (fileType) {
-    case "image": {
-      fileTypeText = 'an image';
-      inputTypeAcceptAttributes = 'image/*';
-      storagePath = "Images/";
-      break;
-    }
-    case "audio": {
-      fileTypeText = 'audio';
-      inputTypeAcceptAttributes = 'audio/*';
-      storagePath = "Music/";
-      break;
-    }
-  }
-
-  const handleFileChange = (e) => {
-    if (!e.target.files) {
-      return;
-    }
-
-    const fileToUpload = e.target.files[0];
-    setIsFileLoading(true);
-    const storageRef = ref(storage, storagePath + fileToUpload.name);
-    const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
-    
-    // Listen for state changes
-    uploadTask.on('state_changed',
-      (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setFileUploadingStatus(progress);
-      }, 
-      (error) => {
-        switch (error.code) {
-          case 'storage/unauthorized':
-            console.log('User does not have permission to access the object');
-            break;
-          case 'storage/canceled':
-            console.log('User canceled the upload');
-            break;
-          case 'storage/unknown':
-            console.log('Unknown error occurred, inspect error.serverResponse');
-            break;
-        };
-      }, 
-      () => {
-        // Upload completed successfully, now we can get the download URL
-        getDownloadURL(uploadTask.snapshot.ref)
-          .then((downloadURL) => {
-            setIsFileLoading(false);
-            setFileUploadURL(downloadURL);
-          })
-      }
-    );
-  };
-
-  return (
-    <label>
-      <div className="flex flex-col items-center justify-center h-full">
-        <div className="flex flex-col justify-center items-center cursor-pointer">
-          <p className="font-bold text-2xl">
-            <BiCloudUpload />
-          </p>
-          <p className="text-lg">
-            Click to upload {fileTypeText}
-          </p>
-        </div>
-      </div>
-      <input type="file" name="upload-file" accept={inputTypeAcceptAttributes} className="hidden" onChange={handleFileChange}/>
-    </label>
   );
-}
+};
 
 const DisabledButton = () => {
   return (
