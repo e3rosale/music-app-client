@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { IoChevronDown } from 'react-icons/io5';
 import { motion } from 'framer-motion';
-import { useStateValue } from '../../context/StateContext';
-import { actionType } from '../../context/reducer';
+import { useUploadSongState } from '../../context/UploadSongContext/UploadSongStateContext';
+import { uploadSongActionType } from '../../context/UploadSongContext/UploadSongReducer';
 
 const FilterButtons = ({ filterData, flag }) => {
   const [isDropDownMenuOpen, setIsDropDownMenuOpen] = useState(false);
   const [dropDownSelectionValue, setDropDownSelectionValue] = useState(null);
-  const { dispatch } = useStateValue();
+  const [_, dispatch] = useUploadSongState();
 
   let dropDownDisplayName = dropDownSelectionValue ?? flag;
 
@@ -17,16 +17,16 @@ const FilterButtons = ({ filterData, flag }) => {
 
     switch (flag) {
       case 'Artist':
-        dispatch({ type: actionType.SET_ARTIST_DROP_DOWN_SELECTION, filterValue: filterName });
+        dispatch({ type: uploadSongActionType.SET_ARTIST_DROP_DOWN_SELECTION, filterValue: filterName });
         break;
       case 'Album':
-        dispatch({ type: actionType.SET_ALBUM_DROP_DOWN_SELECTION, filterValue: filterName }); 
+        dispatch({ type: uploadSongActionType.SET_ALBUM_DROP_DOWN_SELECTION, filterValue: filterName });
         break;
       case 'Language':
-        dispatch({ type: actionType.SET_LANGUAGE_DROP_DOWN_SELECTION, filterValue: filterName });
+        dispatch({ type: uploadSongActionType.SET_LANGUAGE_DROP_DOWN_SELECTION, filterValue: filterName });
         break;
       case 'Category':
-        dispatch({ type: actionType.SET_CATEGORY_DROP_DOWN_SELECTION, filterValue: filterName });
+        dispatch({ type: uploadSongActionType.SET_CATEGORY_DROP_DOWN_SELECTION, filterValue: filterName });
         break;
     }
   };

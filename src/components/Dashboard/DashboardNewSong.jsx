@@ -9,10 +9,13 @@ import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from "firebas
 import { storage } from "../../config/firebase.config";
 import { MdDelete } from "react-icons/md";
 import { motion } from 'framer-motion';
+import { useUploadSongState } from "../../context/UploadSongContext/UploadSongStateContext";
+import { uploadSongActionType } from "../../context/UploadSongContext/UploadSongReducer";
 
 const DashboardNewSong = () => {
   const [songName, setSongName] = useState("");
   const { state, dispatch } = useStateValue();
+  const [_, uploadSongDispatch] = useUploadSongState();
 
   const [isSavingSong, setIsSavingSong] = useState(false);
 
@@ -40,8 +43,6 @@ const DashboardNewSong = () => {
         })
         .catch(error => console.log(error));
     }
-
-    return () => dispatch({ type: actionType.CLEAR_ALL_DROP_DOWN_SELECTIONS });
   }, []);
 
   const deleteUploadedFile = (uploadFileURL, setIsFileLoading, setFileUploadURL, setFileUploadingStatus) => {

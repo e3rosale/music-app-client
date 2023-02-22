@@ -4,6 +4,7 @@ import Header from '../Header';
 import { IoHome } from 'react-icons/io5';
 import { isActiveStyles, isNotActiveStyles } from '../../utils/styles';
 import { DashboardHome, DashboardSongs, DashboardUsers, DashboardArtists, DashboardAlbums, DashboardNewSong } from './index';
+import { UploadSongStateProvider } from '../../context/UploadSongContext/UploadSongStateContext';
 
 const Dashboard = () => {
   return (
@@ -23,7 +24,13 @@ const Dashboard = () => {
           <Route path='/songs' element={<DashboardSongs />}></Route>
           <Route path='/artist' element={<DashboardArtists />}></Route>
           <Route path='/albums' element={<DashboardAlbums />}></Route>
-          <Route path='/newSong' element={<DashboardNewSong />}></Route>
+          <Route path='/newSong'
+            element={
+              <UploadSongStateProvider>
+                <DashboardNewSong />
+              </UploadSongStateProvider>
+            }>
+          </Route>
         </Routes>
       </div>
     </div>
