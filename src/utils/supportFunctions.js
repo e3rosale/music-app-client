@@ -7,8 +7,10 @@ export const filterByLanguage = [
 ];
 
 export const filterByCategory = [
-  { id: 2, name: 'Jasp', value: 'jasp' },
+  { id: 1, name: 'Jazz', value: 'jazz' },
+  { id: 2, name: 'Melody', value: 'melody' },
   { id: 3, name: 'Rock', value: 'rock' },
-  { id: 4, name: 'Melody', value: 'melody' },
+  { id: 4, name: 'Jasp', value: 'jasp' },
   { id: 5, name: 'Karaoke', value: 'karaoke' },
+  { id: 6, name: 'Pop', value: 'pop' },
 ];
