@@ -5,9 +5,22 @@ import moment from 'moment';
 import { changeUserRole, deleteUser, getAllUsers } from "../../api";
 import { actionType } from "../../context/reducer";
 import { MdDelete } from "react-icons/md";
+import { useEffect } from "react";
 
 const DashboardUsers = () => {
-  const { state } = useStateValue();
+  const { state, dispatch } = useStateValue();
+
+  useEffect(() => {
+    if (state.allUsers) {
+      return;
+    }
+
+    getAllUsers()
+      .then(users => {
+        dispatch({ type: actionType.SET_ALL_USERS, allUsers: users.data });
+      })
+      .catch(error => console.log(error));
+  }, []);
 
   return (
     <div className="w-full p-4 flex items-center justify-center flex-col">
@@ -30,7 +43,7 @@ const DashboardUsers = () => {
         </div>
 
         {/* table body content */}
-        {state.allUsers?.map((user, index) => <DashboardUserCard data={user} key={index} isNotCurrentUser={user.user_id !== state.user.user_id} />)}
+        {state.allUsers?.map((user, index) => <DashboardUserCard data={user} key={index} isNotCurrentUser={user.user_id !== state.user?.user_id} />)}
       </div>
     </div>
   );
