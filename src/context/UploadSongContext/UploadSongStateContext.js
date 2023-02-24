@@ -17,7 +17,7 @@ export const useUploadSongState = () => {
   const uploadSongContext = useContext(UploadSongContext);
 
   if (uploadSongContext === undefined) {
-    throw new Error('useUploadSong must be used within a UploadSongStateProvider');
+    throw new Error('useUploadSongState must be used within an UploadSongStateProvider.');
   }
 
   return uploadSongContext;

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Logo } from "../assets/img";
 import { isActiveStyles, isNotActiveStyles } from '../utils/styles';
-import { FaCrown } from 'react-icons/fa';
 import { useStateValue } from '../context/StateContext';
 import { getAuth } from 'firebase/auth';
 import { app } from '../config/firebase.config';
@@ -38,7 +37,7 @@ const Header = () => {
         {state.user?.imageURL && <img src={state.user?.imageURL} className='w-12 min-w-[44px] object-cover rounded-full shadow-lg' alt='Image of user' referrerPolicy='no-referrer'/>}
         <div className='flex flex-col'>
           <p className='text-textColor text-lg hover:text-headingColor font-semibold'>{state.user?.name ?? 'User' }</p>
-          <p className='flex items-center gap-2 text-xs text-gray-500 font-normal'>Premium Member. <FaCrown className='text-sm -ml-1 text-yellow-500'/></p>
+          <p className='flex items-center gap-2 text-xs text-gray-500 font-normal'>Premium Member.</p>
         </div>
         {menuIsOpen && (
           <motion.div

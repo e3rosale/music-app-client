@@ -5,6 +5,7 @@ import { IoHome } from 'react-icons/io5';
 import { isActiveStyles, isNotActiveStyles } from '../../utils/styles';
 import { DashboardHome, DashboardSongs, DashboardUsers, DashboardArtists, DashboardAlbums, DashboardNewSong } from './index';
 import { UploadSongStateProvider } from '../../context/UploadSongContext/UploadSongStateContext';
+import { UploadArtistStateProvider } from '../../context/UploadArtistContext/UploadArtistStateContext';
 
 const Dashboard = () => {
   return (
@@ -27,7 +28,9 @@ const Dashboard = () => {
           <Route path='/newSong'
             element={
               <UploadSongStateProvider>
-                <DashboardNewSong />
+                <UploadArtistStateProvider>
+                  <DashboardNewSong />
+                </UploadArtistStateProvider>
               </UploadSongStateProvider>
             }>
           </Route>
