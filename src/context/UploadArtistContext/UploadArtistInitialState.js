@@ -4,8 +4,8 @@ const initialUploadArtistState = {
   artistInstagram: null,
   artistImageUploadURL: null,
   artistDocumentCreationInProgress: null,
-  artistImageFileIsSavingInStorage: null,
-  artistImageFileSavingProgress: 0
+  artistImageFileStorageTransactionInProgress: null,
+  artistImageFileStorageTransactionProgress: 0
 }
 
 export default initialUploadArtistState;

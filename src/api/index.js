@@ -86,3 +86,12 @@ export const deleteSong = async (songId) => {
     throw error;
   }
 }
+
+export const uploadArtist = async (newArtist) => {
+  try {
+    const res = axios.post(`${baseURL}api/artist/save`, { ...newArtist });
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+}

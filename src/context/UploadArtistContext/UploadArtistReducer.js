@@ -1,14 +1,18 @@
+import initialUploadArtistState from "./UploadArtistInitialState";
+
 export const uploadArtistActionType = {
   SET_ARTIST_NAME: 'SET_ARTIST_NAME',
   SET_ARTIST_TWITTER: 'SET_ARTIST_TWITTER',
   SET_ARTIST_INSTAGRAM: 'SET_ARTIST_INSTAGRAM',
   SET_ARTIST_IMAGE_UPLOAD_URL: 'SET_ARTIST_IMAGE_UPLOAD_URL',
   SET_ARTIST_DOCUMENT_CREATION_IN_PROGRESS: 'SET_ARTIST_DOCUMENT_CREATION_IN_PROGRESS',
-  SET_ARTIST_IMAGE_FILE_IS_SAVING_IN_STORAGE: 'SET_ARTIST_IMAGE_FILE_IS_SAVING_IN_STORAGE',
-  SET_ARTIST_IMAGE_FILE_SAVING_PROGRESS: 'SET_ARTIST_IMAGE_FILE_SAVING_PROGRESS',
+  SET_ARTIST_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS: 'SET_ARTIST_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS',
+  SET_ARTIST_IMAGE_FILE_STORAGE_TRANSACTION_PROGRESS: 'SET_ARTIST_IMAGE_FILE_STORAGE_TRANSACTION_PROGRESS',
+  CLEAR_ALL_ARTIST_FIELDS: 'CLEAR_ALL_ARTIST_FIELDS',
 };
 
 export const uploadArtistReducer = (state, action) => {
+  console.log(action)
   switch (action.type) {
     case uploadArtistActionType.SET_ARTIST_NAME:
       return {
@@ -35,15 +39,19 @@ export const uploadArtistReducer = (state, action) => {
         ...state,
         artistDocumentCreationInProgress: action.artistDocumentCreationInProgress,
       }
-    case uploadArtistActionType.SET_ARTIST_IMAGE_FILE_IS_SAVING_IN_STORAGE:
+    case uploadArtistActionType.SET_ARTIST_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS:
       return {
         ...state,
-        artistImageFileIsSavingInStorage: action.artistImageFileIsSavingInStorage,
+        artistImageFileStorageTransactionInProgress: action.artistImageFileStorageTransactionInProgress,
       }
-    case uploadArtistActionType.SET_ARTIST_IMAGE_FILE_SAVING_PROGRESS:
+    case uploadArtistActionType.SET_ARTIST_IMAGE_FILE_STORAGE_TRANSACTION_PROGRESS:
       return {
         ...state,
-        artistImageFileSavingProgress: action.artistImageFileSavingProgress
+        artistImageFileStorageTransactionProgress: action.artistImageFileStorageTransactionProgress
+      };
+    case uploadArtistActionType.CLEAR_ALL_ARTIST_FIELDS:
+      return {
+        ...initialUploadArtistState,
       };
     default:
       throw new Error('Unknown action: ' + action.type);

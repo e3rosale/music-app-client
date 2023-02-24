@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useStateValue } from "../../../context/StateContext";
 import { filterByCategory, filterByLanguage } from "../../../utils/supportFunctions";
 import { FilterButtons } from "..";
-import { getAllAlbums, getAllArtists, getAllSongs, uploadSong } from '../../../api';
+import { getAllAlbums, getAllArtists, getAllSongs, uploadArtist, uploadSong } from '../../../api';
 import { actionType } from "../../../context/reducer";
 import { deleteObject, ref } from "firebase/storage";
 import { storage } from "../../../config/firebase.config";
@@ -10,7 +10,7 @@ import { MdDelete } from "react-icons/md";
 import { motion } from 'framer-motion';
 import { useUploadSongState } from "../../../context/UploadSongContext/UploadSongStateContext";
 import { uploadSongActionType } from "../../../context/UploadSongContext/UploadSongReducer";
-import FileUploader from "./DashboardNewSongFileUploader";
+import FileUploader, { fileUploaderTypes } from "./DashboardNewSongFileUploader";
 import { useUploadArtistState } from "../../../context/UploadArtistContext/UploadArtistStateContext";
 import { uploadArtistActionType } from "../../../context/UploadArtistContext/UploadArtistReducer";
 
@@ -40,8 +40,8 @@ const DashboardNewSong = () => {
       artistInstagram,
       artistImageUploadURL,
       artistDocumentCreationInProgress,
-      artistImageFileIsSavingInStorage,
-      artistImageFileSavingProgress
+      artistImageFileStorageTransactionInProgress,
+      artistImageFileStorageTransactionProgress
     }, uploadArtistDispatch
   ] = useUploadArtistState();
 
@@ -67,6 +67,7 @@ const DashboardNewSong = () => {
 
   const deleteUploadedFile = (fileType) => {
     let uploadFileURL;
+
     if (fileType === "image") {
       uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_IS_LOADING, imageFileIsLoading: true });
       uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_LOADING_PROGRESS, imageFileLoadingProgress: 0 });
@@ -77,6 +78,12 @@ const DashboardNewSong = () => {
       uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_IS_LOADING, audioFileIsLoading: true });
       uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_LOADING_PROGRESS, audioFileLoadingProgress: 0 });
       uploadFileURL = audioFileURL;
+    }
+
+    if (fileType === fileUploaderTypes.ARTIST_IMAGE) {
+      uploadArtistDispatch({ type: uploadArtistActionType.SET_ARTIST_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS, artistImageFileStorageTransactionInProgress: true });
+      uploadArtistDispatch({ type: uploadArtistActionType.SET_ARTIST_IMAGE_FILE_STORAGE_TRANSACTION_PROGRESS, artistImageFileStorageTransactionProgress: 0 });
+      uploadFileURL = artistImageUploadURL;
     }
 
     const targetFileRef = ref(storage, uploadFileURL);
@@ -92,6 +99,11 @@ const DashboardNewSong = () => {
         if (fileType === "audio") {
           uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_IS_LOADING, audioFileIsLoading: false });
           uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_URL, audioFileURL: null });
+        }
+
+        if (fileType === fileUploaderTypes.ARTIST_IMAGE) {
+          uploadArtistDispatch({ type: uploadArtistActionType.SET_ARTIST_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS, artistImageFileStorageTransactionInProgress: false });
+          uploadArtistDispatch({ type: uploadArtistActionType.SET_ARTIST_IMAGE_UPLOAD_URL, artistImageUploadURL: null });
         }
       })
       .catch(error => console.log(error));
@@ -129,12 +141,35 @@ const DashboardNewSong = () => {
 
   const saveArtist = async () => {
     uploadArtistDispatch({ type: uploadArtistActionType.SET_ARTIST_DOCUMENT_CREATION_IN_PROGRESS, artistDocumentCreationInProgress: true });
+
+    const newArtistToSave = {
+      name: artistName,
+      imageURL: artistImageUploadURL,
+      twitter: artistTwitter,
+      instagram: artistInstagram,
+    };
+
+    try {
+      await uploadArtist(newArtistToSave);
+      uploadArtistDispatch({ type: uploadArtistActionType.CLEAR_ALL_ARTIST_FIELDS });
+
+      getAllArtists()
+        .then(artists => {
+          console.log('inside getAllArtists');
+          console.log('artists: ');
+          console.log(artists);
+          dispatch({ type: actionType.SET_ALL_ARTISTS, allArtists: artists.data ?? [] });
+        })
+        .catch(error => console.log(error));
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const areAllSongFieldsPopulated = 
     () => songName && artistDropDownSelection && languageDropDownSelection && categoryDropDownSelection && imageFileURL && audioFileURL;
 
-  const areAllArtistFieldsPopulated = () => artistName && artistTwitter && artistInstagram;
+  const areAllArtistFieldsPopulated = () => artistName && artistImageUploadURL && artistTwitter && artistInstagram;
 
   return (
     <div className="flex flex-col items-center justify-center p-4 border border-gray-300 rounded-md gap-4">
@@ -167,7 +202,7 @@ const DashboardNewSong = () => {
                   <MdDelete className="text-white" />
                 </button>
               </div> : 
-              <FileUploader fileType={"image"} />
+              <FileUploader fileType={fileUploaderTypes.SONG_IMAGE} />
             }
           </>
         )}
@@ -187,7 +222,7 @@ const DashboardNewSong = () => {
                   <MdDelete className="text-white" />
                 </button>
               </div> : 
-              <FileUploader fileType={"audio"}/>
+              <FileUploader fileType={fileUploaderTypes.SONG_AUDIO}/>
             }
           </>
         )}
@@ -212,8 +247,8 @@ const DashboardNewSong = () => {
         disabled={!!artistDocumentCreationInProgress}
       />
       <div className="bg-card backdrop-blur-md w-full h-300 rounded-md border-2 border-dotted border-gray-300 cursor-pointer">
-        {artistImageFileIsSavingInStorage && <FileLoader progress={artistImageFileSavingProgress} />}
-        {!artistImageFileIsSavingInStorage && (
+        {artistImageFileStorageTransactionInProgress && <FileLoader progress={artistImageFileStorageTransactionProgress} />}
+        {!artistImageFileStorageTransactionInProgress && (
           <>
             {artistImageUploadURL ?
               <div className="relative w-full h-full overflow-hidden rounded-md">
@@ -221,12 +256,12 @@ const DashboardNewSong = () => {
                 <button
                   type="button"
                   className="absolute bottom-3 right-3 p-3 rounded-full bg-red-500 text-xl cursor-pointer outline-none border-none hover:shadow-md duration-200 transition-all ease-in-out"
-                  onClick={() => deleteUploadedFile("image")}
+                  onClick={() => deleteUploadedFile(fileUploaderTypes.ARTIST_IMAGE)}
                 >
                   <MdDelete className="text-white" />
                 </button>
               </div> : 
-              <FileUploader fileType={"image"} />
+              <FileUploader fileType={fileUploaderTypes.ARTIST_IMAGE} />
             }
           </>
         )}

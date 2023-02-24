@@ -1,27 +1,42 @@
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { BiCloudUpload } from 'react-icons/bi';
 import { storage } from '../../../config/firebase.config';
+import { uploadArtistActionType } from '../../../context/UploadArtistContext/UploadArtistReducer';
+import { useUploadArtistState } from '../../../context/UploadArtistContext/UploadArtistStateContext';
 import { uploadSongActionType } from '../../../context/UploadSongContext/UploadSongReducer';
 import { useUploadSongState } from '../../../context/UploadSongContext/UploadSongStateContext';
 
+export const fileUploaderTypes = {
+  SONG_IMAGE: "SONG_IMAGE",
+  SONG_AUDIO: "SONG_AUDIO",
+  ARTIST_IMAGE: "ARTIST_IMAGE"
+}
+
 const FileUploader = ({ fileType }) => {
-  const [_, uploadSongDispatch] = useUploadSongState();
+  const [{}, uploadSongDispatch] = useUploadSongState();
+  const [{}, uploadArtistDispatch] = useUploadArtistState();
+
   let fileTypeText;
   let inputTypeAcceptAttributes;
   let storagePath;
 
   switch (fileType) {
-    case "image": {
-      fileTypeText = 'an image';
+    case fileUploaderTypes.SONG_IMAGE: {
+      fileTypeText = 'a song cover image';
       inputTypeAcceptAttributes = 'image/*';
       storagePath = "Images/";
       break;
     }
-    case "audio": {
-      fileTypeText = 'audio';
+    case fileUploaderTypes.SONG_AUDIO: {
+      fileTypeText = 'an audio file';
       inputTypeAcceptAttributes = 'audio/*';
       storagePath = "Music/";
       break;
+    }
+    case fileUploaderTypes.ARTIST_IMAGE: {
+      fileTypeText = 'an artist image';
+      inputTypeAcceptAttributes = 'image/*';
+      storagePath = "ArtistImages/"
     }
   }
 
@@ -32,12 +47,16 @@ const FileUploader = ({ fileType }) => {
 
     const fileToUpload = e.target.files[0];
 
-    if (fileType === "image") {
+    if (fileType === fileUploaderTypes.SONG_IMAGE) {
       uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_IS_LOADING, imageFileIsLoading: true });
     }
 
-    if (fileType === "audio") {
+    if (fileType === fileUploaderTypes.SONG_AUDIO) {
       uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_IS_LOADING, audioFileIsLoading: true });
+    }
+
+    if (fileType === fileUploaderTypes.ARTIST_IMAGE) {
+      uploadArtistDispatch({ type: uploadArtistActionType.SET_ARTIST_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS, artistImageFileStorageTransactionInProgress: true });
     }
 
     const storageRef = ref(storage, storagePath + fileToUpload.name);
@@ -48,12 +67,16 @@ const FileUploader = ({ fileType }) => {
       (snapshot) => {
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
-        if (fileType === "image") {
+        if (fileType === fileUploaderTypes.SONG_IMAGE) {
           uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_LOADING_PROGRESS, imageFileLoadingProgress: progress });
         }
 
-        if (fileType === "audio") {
+        if (fileType === fileUploaderTypes.SONG_AUDIO) {
           uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_LOADING_PROGRESS, audioFileLoadingProgress: progress });
+        }
+
+        if (fileType === fileUploaderTypes.ARTIST_IMAGE) {
+          uploadArtistDispatch({ type: uploadArtistActionType.SET_ARTIST_IMAGE_FILE_STORAGE_TRANSACTION_PROGRESS, artistImageFileStorageTransactionProgress: progress });
         }
       }, 
       (error) => {
@@ -73,16 +96,22 @@ const FileUploader = ({ fileType }) => {
         // Upload completed successfully, now we can get the download URL
         getDownloadURL(uploadTask.snapshot.ref)
           .then((downloadURL) => {
-            if (fileType === "image") {
+            if (fileType === fileUploaderTypes.SONG_IMAGE) {
               uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_IS_LOADING, imageFileIsLoading: false });
               uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_URL, imageFileURL: downloadURL });
               uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_LOADING_PROGRESS, imageFileLoadingProgress: 0 });
             }
         
-            if (fileType === "audio") {
+            if (fileType === fileUploaderTypes.SONG_AUDIO) {
               uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_IS_LOADING, audioFileIsLoading: false });
               uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_URL, audioFileURL: downloadURL });
               uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_LOADING_PROGRESS, audioFileLoadingProgress: 0 });
+            }
+
+            if (fileType === fileUploaderTypes.ARTIST_IMAGE) {
+              uploadArtistDispatch({ type: uploadArtistActionType.SET_ARTIST_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS, artistImageFileStorageTransactionInProgress: false });
+              uploadArtistDispatch({ type: uploadArtistActionType.SET_ARTIST_IMAGE_UPLOAD_URL, artistImageUploadURL: downloadURL });
+              uploadArtistDispatch({ type: uploadArtistActionType.SET_ARTIST_IMAGE_FILE_STORAGE_TRANSACTION_PROGRESS, artistImageFileStorageTransactionProgress: 0 });
             }
           });
       }
