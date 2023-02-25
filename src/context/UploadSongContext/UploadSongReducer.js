@@ -16,6 +16,8 @@ export const uploadSongActionType = {
 };
 
 const uploadSongReducer = (state, action) => {
+  console.log(action);
+
   switch(action.type) {
     case uploadSongActionType.SET_SONG_NAME:
       return {

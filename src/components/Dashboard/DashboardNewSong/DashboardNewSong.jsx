@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useStateValue } from "../../../context/StateContext";
 import { filterByCategory, filterByLanguage } from "../../../utils/supportFunctions";
 import { FilterButtons } from "..";
-import { getAllAlbums, getAllArtists, getAllSongs, uploadArtist, uploadSong } from '../../../api';
+import { getAllAlbums, getAllArtists, getAllSongs, uploadAlbum, uploadArtist, uploadSong } from '../../../api';
 import { actionType } from "../../../context/reducer";
 import { deleteObject, ref } from "firebase/storage";
 import { storage } from "../../../config/firebase.config";
@@ -98,6 +98,12 @@ const DashboardNewSong = () => {
       uploadFileURL = artistImageUploadURL;
     }
 
+    if (fileType === fileUploaderTypes.ALBUM_IMAGE) {
+      uploadAlbumDispatch({ type: uploadAlbumActionType.SET_ALBUM_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS, albumImageFileStorageTransactionInProgress: true });
+      uploadAlbumDispatch({ type: uploadAlbumActionType.SET_ALBUM_IMAGE_FILE_STORAGE_TRANSACTION_PROGRESS, albumImageFileStorageTransactionProgress: 0 });
+      uploadFileURL = albumImageUploadURL;
+    }
+
     const targetFileRef = ref(storage, uploadFileURL);
 
     // delete the file
@@ -116,6 +122,11 @@ const DashboardNewSong = () => {
         if (fileType === fileUploaderTypes.ARTIST_IMAGE) {
           uploadArtistDispatch({ type: uploadArtistActionType.SET_ARTIST_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS, artistImageFileStorageTransactionInProgress: false });
           uploadArtistDispatch({ type: uploadArtistActionType.SET_ARTIST_IMAGE_UPLOAD_URL, artistImageUploadURL: null });
+        }
+
+        if (fileType === fileUploaderTypes.ALBUM_IMAGE) {
+          uploadAlbumDispatch({ type: uploadAlbumActionType.SET_ALBUM_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS, albumImageFileStorageTransactionInProgress: false });
+          uploadAlbumDispatch({ type: uploadAlbumActionType.SET_ALBUM_IMAGE_UPLOAD_URL, albumImageUploadURL: null });
         }
       })
       .catch(error => console.log(error));
@@ -177,6 +188,25 @@ const DashboardNewSong = () => {
 
   const saveAlbum = async () => {
     uploadAlbumDispatch({ type: uploadAlbumActionType.SET_ALBUM_DOCUMENT_CREATION_IN_PROGRESS, albumDocumentCreationInProgress: true });
+
+    const newAlbumToSave = {
+      name: albumName,
+      imageURL: albumImageUploadURL
+    };
+
+    try {
+      await uploadAlbum(newAlbumToSave);
+
+      getAllAlbums()
+        .then(albums => {
+          dispatch({ type: actionType.SET_ALL_ALBUMS, allAlbums: albums.data ?? [] });
+        })
+        .catch(error => console.log(error));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      uploadAlbumDispatch({ type: uploadAlbumActionType.CLEAR_ALL_ALBUM_FIELDS });
+    }
   }
 
   const areAllSongFieldsPopulated = 
