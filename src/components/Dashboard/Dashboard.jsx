@@ -6,6 +6,7 @@ import { isActiveStyles, isNotActiveStyles } from '../../utils/styles';
 import { DashboardHome, DashboardSongs, DashboardUsers, DashboardArtists, DashboardAlbums, DashboardNewSong } from './index';
 import { UploadSongStateProvider } from '../../context/UploadSongContext/UploadSongStateContext';
 import { UploadArtistStateProvider } from '../../context/UploadArtistContext/UploadArtistStateContext';
+import { UploadAlbumStateProvider } from '../../context/UploadAlbumContext/UploadAlbumStateContext';
 
 const Dashboard = () => {
   return (
@@ -29,7 +30,9 @@ const Dashboard = () => {
             element={
               <UploadSongStateProvider>
                 <UploadArtistStateProvider>
-                  <DashboardNewSong />
+                  <UploadAlbumStateProvider>
+                    <DashboardNewSong />
+                  </UploadAlbumStateProvider>
                 </UploadArtistStateProvider>
               </UploadSongStateProvider>
             }>

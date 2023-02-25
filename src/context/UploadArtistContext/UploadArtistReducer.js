@@ -12,7 +12,6 @@ export const uploadArtistActionType = {
 };
 
 export const uploadArtistReducer = (state, action) => {
-  console.log(action)
   switch (action.type) {
     case uploadArtistActionType.SET_ARTIST_NAME:
       return {

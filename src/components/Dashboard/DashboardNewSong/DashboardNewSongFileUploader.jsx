@@ -1,6 +1,8 @@
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { BiCloudUpload } from 'react-icons/bi';
 import { storage } from '../../../config/firebase.config';
+import { uploadAlbumActionType } from '../../../context/UploadAlbumContext/UploadAlbumReducer';
+import { useUploadAlbumState } from '../../../context/UploadAlbumContext/UploadAlbumStateContext';
 import { uploadArtistActionType } from '../../../context/UploadArtistContext/UploadArtistReducer';
 import { useUploadArtistState } from '../../../context/UploadArtistContext/UploadArtistStateContext';
 import { uploadSongActionType } from '../../../context/UploadSongContext/UploadSongReducer';
@@ -9,12 +11,14 @@ import { useUploadSongState } from '../../../context/UploadSongContext/UploadSon
 export const fileUploaderTypes = {
   SONG_IMAGE: "SONG_IMAGE",
   SONG_AUDIO: "SONG_AUDIO",
-  ARTIST_IMAGE: "ARTIST_IMAGE"
+  ARTIST_IMAGE: "ARTIST_IMAGE",
+  ALBUM_IMAGE: "ALBUM_IMAGE",
 }
 
 const FileUploader = ({ fileType }) => {
   const [{}, uploadSongDispatch] = useUploadSongState();
   const [{}, uploadArtistDispatch] = useUploadArtistState();
+  const [{}, uploadAlbumDispatch] = useUploadAlbumState();
 
   let fileTypeText;
   let inputTypeAcceptAttributes;
@@ -37,6 +41,13 @@ const FileUploader = ({ fileType }) => {
       fileTypeText = 'an artist image';
       inputTypeAcceptAttributes = 'image/*';
       storagePath = "ArtistImages/"
+      break;
+    }
+    case fileUploaderTypes.ALBUM_IMAGE: {
+      fileTypeText = "an album image";
+      inputTypeAcceptAttributes = 'image/*';
+      storagePath = "AlbumImages/";
+      break;
     }
   }
 
@@ -59,6 +70,10 @@ const FileUploader = ({ fileType }) => {
       uploadArtistDispatch({ type: uploadArtistActionType.SET_ARTIST_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS, artistImageFileStorageTransactionInProgress: true });
     }
 
+    if (fileType === fileUploaderTypes.ALBUM_IMAGE) {
+      uploadAlbumDispatch({ type: uploadAlbumActionType.SET_ALBUM_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS, albumImageFileStorageTransactionInProgress: true });
+    }
+
     const storageRef = ref(storage, storagePath + fileToUpload.name);
     const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
 
@@ -77,6 +92,10 @@ const FileUploader = ({ fileType }) => {
 
         if (fileType === fileUploaderTypes.ARTIST_IMAGE) {
           uploadArtistDispatch({ type: uploadArtistActionType.SET_ARTIST_IMAGE_FILE_STORAGE_TRANSACTION_PROGRESS, artistImageFileStorageTransactionProgress: progress });
+        }
+
+        if (fileType === fileUploaderTypes.ALBUM_IMAGE) {
+          uploadAlbumDispatch({ type: uploadAlbumActionType.SET_ALBUM_IMAGE_FILE_STORAGE_TRANSACTION_PROGRESS, albumImageFileStorageTransactionProgress: progress });
         }
       }, 
       (error) => {
@@ -112,6 +131,12 @@ const FileUploader = ({ fileType }) => {
               uploadArtistDispatch({ type: uploadArtistActionType.SET_ARTIST_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS, artistImageFileStorageTransactionInProgress: false });
               uploadArtistDispatch({ type: uploadArtistActionType.SET_ARTIST_IMAGE_UPLOAD_URL, artistImageUploadURL: downloadURL });
               uploadArtistDispatch({ type: uploadArtistActionType.SET_ARTIST_IMAGE_FILE_STORAGE_TRANSACTION_PROGRESS, artistImageFileStorageTransactionProgress: 0 });
+            }
+
+            if (fileType === fileUploaderTypes.ALBUM_IMAGE) {
+              uploadAlbumDispatch({ type: uploadAlbumActionType.SET_ALBUM_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS, albumImageFileStorageTransactionInProgress: false });
+              uploadAlbumDispatch({ type: uploadAlbumActionType.SET_ALBUM_IMAGE_UPLOAD_URL, albumImageUploadURL: downloadURL });
+              uploadAlbumDispatch({ type: uploadAlbumActionType.SET_ALBUM_IMAGE_FILE_STORAGE_TRANSACTION_PROGRESS, albumImageFileStorageTransactionProgress: 0 });
             }
           });
       }

@@ -13,6 +13,8 @@ import { uploadSongActionType } from "../../../context/UploadSongContext/UploadS
 import FileUploader, { fileUploaderTypes } from "./DashboardNewSongFileUploader";
 import { useUploadArtistState } from "../../../context/UploadArtistContext/UploadArtistStateContext";
 import { uploadArtistActionType } from "../../../context/UploadArtistContext/UploadArtistReducer";
+import { useUploadAlbumState } from "../../../context/UploadAlbumContext/UploadAlbumStateContext";
+import { uploadAlbumActionType } from "../../../context/UploadAlbumContext/UploadAlbumReducer";
 
 const DashboardNewSong = () => {
   const { state, dispatch } = useStateValue();
@@ -44,6 +46,16 @@ const DashboardNewSong = () => {
       artistImageFileStorageTransactionProgress
     }, uploadArtistDispatch
   ] = useUploadArtistState();
+
+  const [
+    {
+      albumName,
+      albumImageUploadURL,
+      albumDocumentCreationInProgress,
+      albumImageFileStorageTransactionInProgress,
+      albumImageFileStorageTransactionProgress
+    }, uploadAlbumDispatch
+  ] = useUploadAlbumState();
 
   const [isSavingSong, setIsSavingSong] = useState(false);
 
@@ -155,9 +167,6 @@ const DashboardNewSong = () => {
 
       getAllArtists()
         .then(artists => {
-          console.log('inside getAllArtists');
-          console.log('artists: ');
-          console.log(artists);
           dispatch({ type: actionType.SET_ALL_ARTISTS, allArtists: artists.data ?? [] });
         })
         .catch(error => console.log(error));
@@ -166,10 +175,16 @@ const DashboardNewSong = () => {
     }
   }
 
+  const saveAlbum = async () => {
+    uploadAlbumDispatch({ type: uploadAlbumActionType.SET_ALBUM_DOCUMENT_CREATION_IN_PROGRESS, albumDocumentCreationInProgress: true });
+  }
+
   const areAllSongFieldsPopulated = 
     () => songName && artistDropDownSelection && languageDropDownSelection && categoryDropDownSelection && imageFileURL && audioFileURL;
 
   const areAllArtistFieldsPopulated = () => artistName && artistImageUploadURL && artistTwitter && artistInstagram;
+
+  const areAllAlbumFieldsPopulated = () => albumName && albumImageUploadURL;
 
   return (
     <div className="flex flex-col items-center justify-center p-4 border border-gray-300 rounded-md gap-4">
@@ -294,6 +309,45 @@ const DashboardNewSong = () => {
           : 
           (<motion.button whileTap={{ scale: 0.75 }} className="px-8 py-2 w-full rounded-md text-white bg-red-600 hover:shadow-lg disabled:opacity-60" onClick={saveArtist} disabled={!areAllArtistFieldsPopulated()}>
             Save artist
+          </motion.button>)
+        }
+      </div>
+      <hr className="border-gray-300 w-full mb-8"/>
+      <p className="font-bold">Album Details</p>
+      <input 
+        type="text" 
+        placeholder="Type your album name..." 
+        className="w-full p-3 rounded-md text-base font-semibold text-textColor outline-none shadow-sm border border-gray-300 bg-transparent"
+        value={albumName ?? ""}
+        onChange={(e) => uploadAlbumDispatch({ type: uploadAlbumActionType.SET_ALBUM_NAME, albumName: e.target.value })}
+        disabled={!!albumDocumentCreationInProgress}
+      />
+      <div className="bg-card backdrop-blur-md w-full h-300 rounded-md border-2 border-dotted border-gray-300 cursor-pointer">
+        {albumImageFileStorageTransactionInProgress && <FileLoader progress={albumImageFileStorageTransactionProgress} />}
+        {!albumImageFileStorageTransactionInProgress && (
+          <>
+            {albumImageUploadURL ?
+              <div className="relative w-full h-full overflow-hidden rounded-md">
+                <img src={albumImageUploadURL} className="w-full h-full object-cover" alt="album image upload"/>
+                <button
+                  type="button"
+                  className="absolute bottom-3 right-3 p-3 rounded-full bg-red-500 text-xl cursor-pointer outline-none border-none hover:shadow-md duration-200 transition-all ease-in-out"
+                  onClick={() => deleteUploadedFile(fileUploaderTypes.ALBUM_IMAGE)}
+                >
+                  <MdDelete className="text-white" />
+                </button>
+              </div> : 
+              <FileUploader fileType={fileUploaderTypes.ALBUM_IMAGE} />
+            }
+          </>
+        )}
+      </div>
+      <div className="flex items-center justify-center w-60 p-4">
+        {albumDocumentCreationInProgress ? 
+          (<DisabledButton/>)
+          : 
+          (<motion.button whileTap={{ scale: 0.75 }} className="px-8 py-2 w-full rounded-md text-white bg-red-600 hover:shadow-lg disabled:opacity-60" onClick={saveAlbum} disabled={!areAllAlbumFieldsPopulated()}>
+            Save album
           </motion.button>)
         }
       </div>
