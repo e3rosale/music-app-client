@@ -59,7 +59,7 @@ const FileUploader = ({ fileType }) => {
     const fileToUpload = e.target.files[0];
 
     if (fileType === fileUploaderTypes.SONG_IMAGE) {
-      uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_IS_LOADING, imageFileIsLoading: true });
+      uploadSongDispatch({ type: uploadSongActionType.SET_SONG_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS, songImageFileStorageTransactionInProgress: true });
     }
 
     if (fileType === fileUploaderTypes.SONG_AUDIO) {
@@ -83,7 +83,7 @@ const FileUploader = ({ fileType }) => {
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
         if (fileType === fileUploaderTypes.SONG_IMAGE) {
-          uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_LOADING_PROGRESS, imageFileLoadingProgress: progress });
+          uploadSongDispatch({ type: uploadSongActionType.SET_SONG_IMAGE_FILE_STORAGE_TRANSACTION_PROGRESS, songImageFileStorageTransactionProgress: progress });
         }
 
         if (fileType === fileUploaderTypes.SONG_AUDIO) {
@@ -116,9 +116,9 @@ const FileUploader = ({ fileType }) => {
         getDownloadURL(uploadTask.snapshot.ref)
           .then((downloadURL) => {
             if (fileType === fileUploaderTypes.SONG_IMAGE) {
-              uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_IS_LOADING, imageFileIsLoading: false });
-              uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_URL, imageFileURL: downloadURL });
-              uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_LOADING_PROGRESS, imageFileLoadingProgress: 0 });
+              uploadSongDispatch({ type: uploadSongActionType.SET_SONG_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS, songImageFileStorageTransactionInProgress: false });
+              uploadSongDispatch({ type: uploadSongActionType.SET_SONG_IMAGE_UPLOAD_URL, songImageUploadURL: downloadURL });
+              uploadSongDispatch({ type: uploadSongActionType.SET_SONG_IMAGE_FILE_STORAGE_TRANSACTION_PROGRESS, songImageFileStorageTransactionProgress: 0 });
             }
         
             if (fileType === fileUploaderTypes.SONG_AUDIO) {

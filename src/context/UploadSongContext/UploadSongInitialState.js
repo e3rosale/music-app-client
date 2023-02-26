@@ -6,12 +6,13 @@ const initialUploadSongState = {
   categoryDropDownSelection: null,
   songTwitter: null,
   songInstagram: null,
-  imageFileIsLoading: false,
-  imageFileLoadingProgress: 0,
-  imageFileURL: null,
+  songImageFileStorageTransactionInProgress: false,
+  songImageFileStorageTransactionProgress: 0,
+  songImageUploadURL: null,
   audioFileIsLoading: false,
   audioFileLoadingProgress: 0,
   audioFileURL: null,
+  songDocumentCreationInProgress: null,
 }
 
 export default initialUploadSongState;

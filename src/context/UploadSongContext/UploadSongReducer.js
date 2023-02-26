@@ -7,9 +7,10 @@ export const uploadSongActionType = {
   SET_LANGUAGE_DROP_DOWN_SELECTION: 'SET_LANGUAGE_DROP_DOWN_SELECTION',
   SET_CATEGORY_DROP_DOWN_SELECTION: 'SET_CATEGORY_DROP_DOWN_SELECTION',
   CLEAR_ALL_SONG_FIELDS: 'CLEAR_ALL_SONG_FIELDS',
-  SET_IMAGE_FILE_IS_LOADING: 'SET_IMAGE_FILE_IS_LOADING',
-  SET_IMAGE_FILE_LOADING_PROGRESS: 'SET_IMAGE_FILE_LOADING_PROGRESS',
-  SET_IMAGE_FILE_URL: 'SET_IMAGE_FILE_URL',
+  SET_SONG_DOCUMENT_CREATION_IN_PROGRESS: 'SET_SONG_DOCUMENT_CREATION_IN_PROGRESS',
+  SET_SONG_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS: 'SET_SONG_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS',
+  SET_SONG_IMAGE_FILE_STORAGE_TRANSACTION_PROGRESS: 'SET_SONG_IMAGE_FILE_STORAGE_TRANSACTION_PROGRESS',
+  SET_SONG_IMAGE_UPLOAD_URL: 'SET_SONG_IMAGE_UPLOAD_URL',
   SET_AUDIO_FILE_IS_LOADING: 'SET_AUDIO_FILE_IS_LOADING',
   SET_AUDIO_FILE_LOADING_PROGRESS: 'SET_AUDIO_FILE_LOADING_PROGRESS',
   SET_AUDIO_FILE_URL: 'SET_AUDIO_FILE_URL',
@@ -44,20 +45,20 @@ const uploadSongReducer = (state, action) => {
         ...state,
         categoryDropDownSelection: action.filterValue,
       };
-    case uploadSongActionType.SET_IMAGE_FILE_IS_LOADING:
+    case uploadSongActionType.SET_SONG_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS:
       return {
         ...state,
-        imageFileIsLoading: action.imageFileIsLoading
+        songImageFileStorageTransactionInProgress: action.songImageFileStorageTransactionInProgress
       };
-    case uploadSongActionType.SET_IMAGE_FILE_LOADING_PROGRESS:
+    case uploadSongActionType.SET_SONG_IMAGE_FILE_STORAGE_TRANSACTION_PROGRESS:
       return {
         ...state,
-        imageFileLoadingProgress: action.imageFileLoadingProgress,
+        songImageFileStorageTransactionProgress: action.songImageFileStorageTransactionProgress,
       };
-    case uploadSongActionType.SET_IMAGE_FILE_URL:
+    case uploadSongActionType.SET_SONG_IMAGE_UPLOAD_URL:
       return {
         ...state,
-        imageFileURL: action.imageFileURL
+        songImageUploadURL: action.songImageUploadURL
       }
     case uploadSongActionType.SET_AUDIO_FILE_IS_LOADING:
       return {
@@ -73,6 +74,11 @@ const uploadSongReducer = (state, action) => {
       return {
         ...state,
         audioFileURL: action.audioFileURL
+      }
+    case uploadSongActionType.SET_SONG_DOCUMENT_CREATION_IN_PROGRESS:
+      return {
+        ...state,
+        songDocumentCreationInProgress: action.songDocumentCreationInProgress,
       }
     case uploadSongActionType.CLEAR_ALL_SONG_FIELDS:
       return {

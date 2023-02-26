@@ -25,9 +25,10 @@ const DashboardNewSong = () => {
       albumDropDownSelection,
       languageDropDownSelection,
       categoryDropDownSelection,
-      imageFileIsLoading,
-      imageFileLoadingProgress,
-      imageFileURL,
+      songDocumentCreationInProgress,
+      songImageFileStorageTransactionInProgress,
+      songImageFileStorageTransactionProgress,
+      songImageUploadURL,
       audioFileIsLoading,
       audioFileLoadingProgress,
       audioFileURL,
@@ -57,8 +58,6 @@ const DashboardNewSong = () => {
     }, uploadAlbumDispatch
   ] = useUploadAlbumState();
 
-  const [isSavingSong, setIsSavingSong] = useState(false);
-
   useEffect(() => {
     if (state.allArtists === null) {
       getAllArtists()
@@ -81,9 +80,9 @@ const DashboardNewSong = () => {
     let uploadFileURL;
 
     if (fileType === fileUploaderTypes.SONG_IMAGE) {
-      uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_IS_LOADING, imageFileIsLoading: true });
-      uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_LOADING_PROGRESS, imageFileLoadingProgress: 0 });
-      uploadFileURL = imageFileURL;
+      uploadSongDispatch({ type: uploadSongActionType.SET_SONG_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS, songImageFileStorageTransactionInProgress: true });
+      uploadSongDispatch({ type: uploadSongActionType.SET_SONG_IMAGE_FILE_STORAGE_TRANSACTION_PROGRESS, songImageFileStorageTransactionProgress: 0 });
+      uploadFileURL = songImageUploadURL;
     }
 
     if (fileType === fileUploaderTypes.SONG_AUDIO) {
@@ -110,8 +109,8 @@ const DashboardNewSong = () => {
     deleteObject(targetFileRef)
       .then(() => {
         if (fileType === fileUploaderTypes.SONG_IMAGE) {
-          uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_IS_LOADING, imageFileIsLoading: false });
-          uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_URL, imageFileURL: null });
+          uploadSongDispatch({ type: uploadSongActionType.SET_SONG_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS, songImageFileStorageTransactionInProgress: false });
+          uploadSongDispatch({ type: uploadSongActionType.SET_SONG_IMAGE_UPLOAD_URL, songImageUploadURL: null });
         }
 
         if (fileType === fileUploaderTypes.SONG_AUDIO) {
@@ -133,11 +132,11 @@ const DashboardNewSong = () => {
   }
 
   const saveSong = async () => {
-    setIsSavingSong(true);
+    uploadSongDispatch({ type: uploadSongActionType.SET_SONG_DOCUMENT_CREATION_IN_PROGRESS, songDocumentCreationInProgress: true });
 
     const newSongToSave =  {
       name: songName,
-      imageURL: imageFileURL,
+      imageURL: songImageUploadURL,
       songURL: audioFileURL,
       album: albumDropDownSelection,
       artist: artistDropDownSelection,
@@ -149,16 +148,17 @@ const DashboardNewSong = () => {
 
     try {
       await uploadSong(newSongToSave);
-      setIsSavingSong(false);
+
       uploadSongDispatch({ type: uploadSongActionType.CLEAR_ALL_SONG_FIELDS });
 
       getAllSongs()
         .then(songs => {
-          dispatch({ type: actionType.SET_ALL_SONGS, allSongs: songs.data });
+          dispatch({ type: actionType.SET_ALL_SONGS, allSongs: songs.data ?? [] });
         })
         .catch(error => console.log(error));
     } catch (error) {
       console.log(error);
+      uploadSongDispatch({ type: uploadSongActionType.SET_SONG_DOCUMENT_CREATION_IN_PROGRESS, songDocumentCreationInProgress: false });
     }
   }
 
@@ -212,7 +212,7 @@ const DashboardNewSong = () => {
   }
 
   const areAllSongFieldsPopulated = 
-    () => songName && artistDropDownSelection && languageDropDownSelection && categoryDropDownSelection && imageFileURL && audioFileURL;
+    () => songName && artistDropDownSelection && languageDropDownSelection && categoryDropDownSelection && songImageUploadURL && audioFileURL;
 
   const areAllArtistFieldsPopulated = () => artistName && artistImageUploadURL && artistTwitter && artistInstagram;
 
@@ -227,6 +227,7 @@ const DashboardNewSong = () => {
         className="w-full p-3 rounded-md text-base font-semibold text-textColor outline-none shadow-sm border border-gray-300 bg-transparent"
         value={songName ?? ""}
         onChange={(e) => uploadSongDispatch({type: uploadSongActionType.SET_SONG_NAME, songName: e.target.value })}
+        disabled={!!songDocumentCreationInProgress}
       />
       <div className="flex w-full justify-between flex-wrap items-center gap-4">
         <FilterButtons filterData={state.allArtists} flag={"Artist"} />
@@ -235,15 +236,16 @@ const DashboardNewSong = () => {
         <FilterButtons filterData={filterByCategory} flag={"Category"} />
       </div>
       <div className="bg-card backdrop-blur-md w-full h-300 rounded-md border-2 border-dotted border-gray-300 cursor-pointer">
-        {imageFileIsLoading && <FileLoader progress={imageFileLoadingProgress} />}
-        {!imageFileIsLoading && (
+        {songImageFileStorageTransactionInProgress && <FileLoader progress={songImageFileStorageTransactionProgress} />}
+        {!songImageFileStorageTransactionInProgress && (
           <>
-            {imageFileURL ?
+            {songImageUploadURL ?
               <div className="relative w-full h-full overflow-hidden rounded-md">
-                <img src={imageFileURL} className="w-full h-full object-cover" alt="song image upload"/>
+                <img src={songImageUploadURL} className="w-full h-full object-cover" alt="song image upload"/>
                 <button
                   type="button"
-                  className="absolute bottom-3 right-3 p-3 rounded-full bg-red-500 text-xl cursor-pointer outline-none border-none hover:shadow-md duration-200 transition-all ease-in-out"
+                  disabled={!!songDocumentCreationInProgress}
+                  className="absolute bottom-3 right-3 p-3 rounded-full bg-red-600 text-xl cursor-pointer outline-none border-none hover:shadow-md duration-200 transition-all ease-in-out disabled:opacity-60"
                   onClick={() => deleteUploadedFile(fileUploaderTypes.SONG_IMAGE)}
                 >
                   <MdDelete className="text-white" />
@@ -263,7 +265,8 @@ const DashboardNewSong = () => {
                 <audio controls src={audioFileURL} />
                 <button
                   type="button"
-                  className="absolute bottom-3 right-3 p-3 rounded-full bg-red-500 text-xl cursor-pointer outline-none border-none hover:shadow-md duration-200 transition-all ease-in-out"
+                  disabled={!!songDocumentCreationInProgress}
+                  className="absolute bottom-3 right-3 p-3 rounded-full bg-red-600 text-xl cursor-pointer outline-none border-none hover:shadow-md duration-200 transition-all ease-in-out disabled:opacity-60"
                   onClick={() => deleteUploadedFile(fileUploaderTypes.SONG_AUDIO)}
                 >
                   <MdDelete className="text-white" />
@@ -275,7 +278,7 @@ const DashboardNewSong = () => {
         )}
       </div>
       <div className="flex items-center justify-center w-60 p-4">
-        {isSavingSong ? 
+        {songDocumentCreationInProgress ? 
           (<DisabledButton/>)
           : 
           (<motion.button whileTap={{ scale: 0.75 }} className="px-8 py-2 w-full rounded-md text-white bg-red-600 hover:shadow-lg disabled:opacity-60" onClick={saveSong} disabled={!areAllSongFieldsPopulated()}>
@@ -337,7 +340,7 @@ const DashboardNewSong = () => {
         />
       </div>
       <div className="flex items-center justify-center w-60 p-4">
-        {artistDocumentCreationInProgress ? 
+        {artistDocumentCreationInProgress ?
           (<DisabledButton/>)
           : 
           (<motion.button whileTap={{ scale: 0.75 }} className="px-8 py-2 w-full rounded-md text-white bg-red-600 hover:shadow-lg disabled:opacity-60" onClick={saveArtist} disabled={!areAllArtistFieldsPopulated()}>
