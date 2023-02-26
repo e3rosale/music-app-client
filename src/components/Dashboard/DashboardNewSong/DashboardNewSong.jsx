@@ -80,13 +80,13 @@ const DashboardNewSong = () => {
   const deleteUploadedFile = (fileType) => {
     let uploadFileURL;
 
-    if (fileType === "image") {
+    if (fileType === fileUploaderTypes.SONG_IMAGE) {
       uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_IS_LOADING, imageFileIsLoading: true });
       uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_LOADING_PROGRESS, imageFileLoadingProgress: 0 });
       uploadFileURL = imageFileURL;
     }
 
-    if (fileType === "audio") {
+    if (fileType === fileUploaderTypes.SONG_AUDIO) {
       uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_IS_LOADING, audioFileIsLoading: true });
       uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_LOADING_PROGRESS, audioFileLoadingProgress: 0 });
       uploadFileURL = audioFileURL;
@@ -109,12 +109,12 @@ const DashboardNewSong = () => {
     // delete the file
     deleteObject(targetFileRef)
       .then(() => {
-        if (fileType === "image") {
+        if (fileType === fileUploaderTypes.SONG_IMAGE) {
           uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_IS_LOADING, imageFileIsLoading: false });
           uploadSongDispatch({ type: uploadSongActionType.SET_IMAGE_FILE_URL, imageFileURL: null });
         }
 
-        if (fileType === "audio") {
+        if (fileType === fileUploaderTypes.SONG_AUDIO) {
           uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_IS_LOADING, audioFileIsLoading: false });
           uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_URL, audioFileURL: null });
         }
@@ -182,7 +182,9 @@ const DashboardNewSong = () => {
         })
         .catch(error => console.log(error));
     } catch (error) {
+      // set error for danger banner
       console.log(error);
+      uploadArtistDispatch({ type: uploadArtistActionType.SET_ARTIST_DOCUMENT_CREATION_IN_PROGRESS, artistDocumentCreationInProgress: false });
     }
   }
 
@@ -196,6 +198,7 @@ const DashboardNewSong = () => {
 
     try {
       await uploadAlbum(newAlbumToSave);
+      uploadAlbumDispatch({ type: uploadAlbumActionType.CLEAR_ALL_ALBUM_FIELDS });
 
       getAllAlbums()
         .then(albums => {
@@ -204,8 +207,7 @@ const DashboardNewSong = () => {
         .catch(error => console.log(error));
     } catch (error) {
       console.log(error);
-    } finally {
-      uploadAlbumDispatch({ type: uploadAlbumActionType.CLEAR_ALL_ALBUM_FIELDS });
+      uploadAlbumDispatch({ type: uploadAlbumActionType.SET_ALBUM_DOCUMENT_CREATION_IN_PROGRESS, albumDocumentCreationInProgress: false });
     }
   }
 
@@ -242,7 +244,7 @@ const DashboardNewSong = () => {
                 <button
                   type="button"
                   className="absolute bottom-3 right-3 p-3 rounded-full bg-red-500 text-xl cursor-pointer outline-none border-none hover:shadow-md duration-200 transition-all ease-in-out"
-                  onClick={() => deleteUploadedFile("image")}
+                  onClick={() => deleteUploadedFile(fileUploaderTypes.SONG_IMAGE)}
                 >
                   <MdDelete className="text-white" />
                 </button>
@@ -262,7 +264,7 @@ const DashboardNewSong = () => {
                 <button
                   type="button"
                   className="absolute bottom-3 right-3 p-3 rounded-full bg-red-500 text-xl cursor-pointer outline-none border-none hover:shadow-md duration-200 transition-all ease-in-out"
-                  onClick={() => deleteUploadedFile("audio")}
+                  onClick={() => deleteUploadedFile(fileUploaderTypes.SONG_AUDIO)}
                 >
                   <MdDelete className="text-white" />
                 </button>
@@ -300,7 +302,8 @@ const DashboardNewSong = () => {
                 <img src={artistImageUploadURL} className="w-full h-full object-cover" alt="artist image upload"/>
                 <button
                   type="button"
-                  className="absolute bottom-3 right-3 p-3 rounded-full bg-red-500 text-xl cursor-pointer outline-none border-none hover:shadow-md duration-200 transition-all ease-in-out"
+                  disabled={!!artistDocumentCreationInProgress}
+                  className="absolute bottom-3 right-3 p-3 rounded-full bg-red-600 text-xl cursor-pointer outline-none border-none hover:shadow-md duration-200 transition-all ease-in-out disabled:opacity-60"
                   onClick={() => deleteUploadedFile(fileUploaderTypes.ARTIST_IMAGE)}
                 >
                   <MdDelete className="text-white" />
@@ -361,7 +364,8 @@ const DashboardNewSong = () => {
                 <img src={albumImageUploadURL} className="w-full h-full object-cover" alt="album image upload"/>
                 <button
                   type="button"
-                  className="absolute bottom-3 right-3 p-3 rounded-full bg-red-500 text-xl cursor-pointer outline-none border-none hover:shadow-md duration-200 transition-all ease-in-out"
+                  disabled={!!albumDocumentCreationInProgress}
+                  className="absolute bottom-3 right-3 p-3 rounded-full bg-red-600 text-xl cursor-pointer outline-none border-none hover:shadow-md duration-200 transition-all ease-in-out disabled:opacity-60"
                   onClick={() => deleteUploadedFile(fileUploaderTypes.ALBUM_IMAGE)}
                 >
                   <MdDelete className="text-white" />
