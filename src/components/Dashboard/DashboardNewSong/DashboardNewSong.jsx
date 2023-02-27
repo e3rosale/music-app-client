@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useStateValue } from "../../../context/ApplicationContext/ApplicationStateContext";
+import React, { useEffect } from "react";
+import { useApplicationState } from "../../../context/ApplicationContext/ApplicationStateContext";
 import { filterByCategory, filterByLanguage } from "../../../utils/supportFunctions";
 import { FilterButtons } from "..";
 import { getAllAlbums, getAllArtists, getAllSongs, uploadAlbum, uploadArtist, uploadSong } from '../../../api';
@@ -17,7 +17,7 @@ import { useUploadAlbumState } from "../../../context/UploadAlbumContext/UploadA
 import { uploadAlbumActionType } from "../../../context/UploadAlbumContext/UploadAlbumReducer";
 
 const DashboardNewSong = () => {
-  const { state, dispatch } = useStateValue();
+  const { state, dispatch } = useApplicationState();
   const [
     {
       songName,

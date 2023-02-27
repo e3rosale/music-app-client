@@ -5,13 +5,13 @@ import { Login, Home, Dashboard } from './components';
 import { app } from './config/firebase.config';
 import { AnimatePresence } from 'framer-motion';
 import { validateUser } from './api';
-import { useStateValue } from './context/ApplicationContext/ApplicationStateContext';
+import { useApplicationState } from './context/ApplicationContext/ApplicationStateContext';
 import { actionType } from './context/ApplicationContext/ApplicationReducer';
 
 const App = () => {
   const firebaseAuth = getAuth(app);
   const navigate = useNavigate();
-  const {state, dispatch} = useStateValue();
+  const {state, dispatch} = useApplicationState();
   const [auth, setAuth] = useState(window.localStorage.getItem("auth") === "true");
   
   useEffect(() => {

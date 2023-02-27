@@ -13,11 +13,11 @@ export const UploadArtistStateProvider = ({ children }) => {
 }
 
 export const useUploadArtistState = () => {
-  const uploadArtistContext = useContext(UploadArtistContext);
+  const uploadArtistState = useContext(UploadArtistContext);
 
-  if (uploadArtistContext === undefined) {
+  if (uploadArtistState === undefined) {
     throw new Error('useUploadArtistState must be used within an UploadArtistStateProvider.');
   }
 
-  return uploadArtistContext;
+  return uploadArtistState;
 }

@@ -4,10 +4,10 @@ import { MdDelete } from "react-icons/md";
 import { deleteSong, getAllSongs } from "../../../api";
 import { storage } from "../../../config/firebase.config";
 import { actionType } from "../../../context/ApplicationContext/ApplicationReducer";
-import { useStateValue } from "../../../context/ApplicationContext/ApplicationStateContext";
+import { useApplicationState } from "../../../context/ApplicationContext/ApplicationStateContext";
 
 const SongCard = ({ data, index }) => {
-  const { _, dispatch } = useStateValue();
+  const { _, dispatch } = useApplicationState();
 
   const removeSong = async (songId, songImageURL, songAudioURL) => {
     if (!songId || !songImageURL || !songAudioURL) {

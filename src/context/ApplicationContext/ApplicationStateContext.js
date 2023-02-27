@@ -14,4 +14,12 @@ export const ApplicationStateProvider = ({ children }) => {
   );
 };
 
-export const useStateValue = () => useContext(ApplicationContext);
+export const useApplicationState = () => {
+  const applicationState = useContext(ApplicationContext);
+
+  if (applicationState === undefined) {
+    throw new Error('useApplicationState must be used within an ApplicationStateProvider.');
+  }
+
+  return applicationState;
+}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from 'framer-motion';
-import { useStateValue } from "../../context/ApplicationContext/ApplicationStateContext";
+import { useApplicationState } from "../../context/ApplicationContext/ApplicationStateContext";
 import moment from 'moment';
 import { changeUserRole, deleteUser, getAllUsers } from "../../api";
 import { actionType } from "../../context/ApplicationContext/ApplicationReducer";
@@ -8,7 +8,7 @@ import { MdDelete } from "react-icons/md";
 import { useEffect } from "react";
 
 const DashboardUsers = () => {
-  const { state, dispatch } = useStateValue();
+  const { state, dispatch } = useApplicationState();
 
   useEffect(() => {
     if (state.allUsers) {
@@ -52,7 +52,7 @@ const DashboardUsers = () => {
 export const DashboardUserCard = ({ data, isNotCurrentUser }) => {
   const createdAt = moment(new Date(data.createdAt)).format("MMMM Do YYYY");
   const [isOpen, setIsOpen] = useState(false);
-  const { dispatch } = useStateValue();
+  const { dispatch } = useApplicationState();
 
   const updateUserRole = async (userId, role) => {
     setIsOpen(false);

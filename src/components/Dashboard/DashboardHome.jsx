@@ -4,7 +4,7 @@ import { GiLoveSong, GiMusicalNotes } from 'react-icons/gi';
 import { RiUserStarFill } from 'react-icons/ri';
 import { getAllUsers, getAllArtists, getAllAlbums, getAllSongs } from '../../api';
 import { actionType } from '../../context/ApplicationContext/ApplicationReducer';
-import { useStateValue } from '../../context/ApplicationContext/ApplicationStateContext';
+import { useApplicationState } from '../../context/ApplicationContext/ApplicationStateContext';
 import { bgColors } from '../../utils/styles';
 
 export const DashboardCard = ({icon, name, count}) => {
@@ -20,7 +20,7 @@ export const DashboardCard = ({icon, name, count}) => {
 }
 
 const DashboardHome = () => {
-  const { state, dispatch } = useStateValue();
+  const { state, dispatch } = useApplicationState();
 
   useEffect(() => {
     if (!state.allUsers) {

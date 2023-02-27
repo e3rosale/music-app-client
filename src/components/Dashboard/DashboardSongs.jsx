@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { IoAdd, IoPause, IoPlay, IoTrash } from "react-icons/io5";
 import { TiDelete } from 'react-icons/ti';
-import { useStateValue } from '../../context/ApplicationContext/ApplicationStateContext';
+import { useApplicationState } from '../../context/ApplicationContext/ApplicationStateContext';
 import { getAllSongs } from '../../api';
 import { actionType } from '../../context/ApplicationContext/ApplicationReducer';
 import { SongCard } from '../Dashboard';
@@ -10,7 +10,7 @@ import { SongCard } from '../Dashboard';
 const DashboardSongs = () => {
   const [songSearchText, setSongSearchText] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
-  const { state, dispatch } = useStateValue();
+  const { state, dispatch } = useApplicationState();
 
   useEffect(() => {
     if (!state.allSongs) {

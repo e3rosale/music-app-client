@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Logo } from "../assets/img";
 import { isActiveStyles, isNotActiveStyles } from '../utils/styles';
-import { useStateValue } from '../context/ApplicationContext/ApplicationStateContext';
+import { useApplicationState } from '../context/ApplicationContext/ApplicationStateContext';
 import { getAuth } from 'firebase/auth';
 import { app } from '../config/firebase.config';
 import { motion } from 'framer-motion';
 
 const Header = () => {
-  const { state } = useStateValue();
+  const { state } = useApplicationState();
   const firebaseAuth = getAuth(app);
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
