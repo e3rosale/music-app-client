@@ -11,9 +11,9 @@ export const uploadSongActionType = {
   SET_SONG_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS: 'SET_SONG_IMAGE_FILE_STORAGE_TRANSACTION_IN_PROGRESS',
   SET_SONG_IMAGE_FILE_STORAGE_TRANSACTION_PROGRESS: 'SET_SONG_IMAGE_FILE_STORAGE_TRANSACTION_PROGRESS',
   SET_SONG_IMAGE_UPLOAD_URL: 'SET_SONG_IMAGE_UPLOAD_URL',
-  SET_AUDIO_FILE_IS_LOADING: 'SET_AUDIO_FILE_IS_LOADING',
-  SET_AUDIO_FILE_LOADING_PROGRESS: 'SET_AUDIO_FILE_LOADING_PROGRESS',
-  SET_AUDIO_FILE_URL: 'SET_AUDIO_FILE_URL',
+  SET_SONG_AUDIO_FILE_STORAGE_TRANSACTION_IN_PROGRESS: 'SET_SONG_AUDIO_FILE_STORAGE_TRANSACTION_IN_PROGRESS',
+  SET_SONG_AUDIO_FILE_STORAGE_TRANSACTION_PROGRESS: 'SET_SONG_AUDIO_FILE_STORAGE_TRANSACTION_PROGRESS',
+  SET_SONG_AUDIO_UPLOAD_URL: 'SET_SONG_AUDIO_UPLOAD_URL',
 };
 
 const uploadSongReducer = (state, action) => {
@@ -60,20 +60,20 @@ const uploadSongReducer = (state, action) => {
         ...state,
         songImageUploadURL: action.songImageUploadURL
       }
-    case uploadSongActionType.SET_AUDIO_FILE_IS_LOADING:
+    case uploadSongActionType.SET_SONG_AUDIO_FILE_STORAGE_TRANSACTION_IN_PROGRESS:
       return {
         ...state,
-        audioFileIsLoading: action.audioFileIsLoading
+        songAudioFileStorageTransactionInProgress: action.songAudioFileStorageTransactionInProgress
       };
-    case uploadSongActionType.SET_AUDIO_FILE_LOADING_PROGRESS:
+    case uploadSongActionType.SET_SONG_AUDIO_FILE_STORAGE_TRANSACTION_PROGRESS:
       return {
         ...state,
-        audioFileLoadingProgress: action.audioFileLoadingProgress
+        songAudioFileStorageTransactionProgress: action.songAudioFileStorageTransactionProgress
       }
-    case uploadSongActionType.SET_AUDIO_FILE_URL:
+    case uploadSongActionType.SET_SONG_AUDIO_UPLOAD_URL:
       return {
         ...state,
-        audioFileURL: action.audioFileURL
+        songAudioUploadURL: action.songAudioUploadURL
       }
     case uploadSongActionType.SET_SONG_DOCUMENT_CREATION_IN_PROGRESS:
       return {

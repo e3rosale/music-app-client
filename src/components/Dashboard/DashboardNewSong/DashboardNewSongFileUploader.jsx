@@ -63,7 +63,7 @@ const FileUploader = ({ fileType }) => {
     }
 
     if (fileType === fileUploaderTypes.SONG_AUDIO) {
-      uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_IS_LOADING, audioFileIsLoading: true });
+      uploadSongDispatch({ type: uploadSongActionType.SET_SONG_AUDIO_FILE_STORAGE_TRANSACTION_IN_PROGRESS, songAudioFileStorageTransactionInProgress: true });
     }
 
     if (fileType === fileUploaderTypes.ARTIST_IMAGE) {
@@ -87,7 +87,7 @@ const FileUploader = ({ fileType }) => {
         }
 
         if (fileType === fileUploaderTypes.SONG_AUDIO) {
-          uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_LOADING_PROGRESS, audioFileLoadingProgress: progress });
+          uploadSongDispatch({ type: uploadSongActionType.SET_SONG_AUDIO_FILE_STORAGE_TRANSACTION_PROGRESS, songAudioFileStorageTransactionProgress: progress });
         }
 
         if (fileType === fileUploaderTypes.ARTIST_IMAGE) {
@@ -122,9 +122,9 @@ const FileUploader = ({ fileType }) => {
             }
         
             if (fileType === fileUploaderTypes.SONG_AUDIO) {
-              uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_IS_LOADING, audioFileIsLoading: false });
-              uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_URL, audioFileURL: downloadURL });
-              uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_LOADING_PROGRESS, audioFileLoadingProgress: 0 });
+              uploadSongDispatch({ type: uploadSongActionType.SET_SONG_AUDIO_FILE_STORAGE_TRANSACTION_IN_PROGRESS, songAudioFileStorageTransactionInProgress: false });
+              uploadSongDispatch({ type: uploadSongActionType.SET_SONG_AUDIO_UPLOAD_URL, songAudioUploadURL: downloadURL });
+              uploadSongDispatch({ type: uploadSongActionType.SET_SONG_AUDIO_FILE_STORAGE_TRANSACTION_PROGRESS, songAudioFileStorageTransactionProgress: 0 });
             }
 
             if (fileType === fileUploaderTypes.ARTIST_IMAGE) {

@@ -9,9 +9,9 @@ const initialUploadSongState = {
   songImageFileStorageTransactionInProgress: false,
   songImageFileStorageTransactionProgress: 0,
   songImageUploadURL: null,
-  audioFileIsLoading: false,
-  audioFileLoadingProgress: 0,
-  audioFileURL: null,
+  songAudioFileStorageTransactionInProgress: false,
+  songAudioFileStorageTransactionProgress: 0,
+  songAudioUploadURL: null,
   songDocumentCreationInProgress: null,
 }
 

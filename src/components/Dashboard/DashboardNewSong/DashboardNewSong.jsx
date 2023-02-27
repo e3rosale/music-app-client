@@ -29,9 +29,9 @@ const DashboardNewSong = () => {
       songImageFileStorageTransactionInProgress,
       songImageFileStorageTransactionProgress,
       songImageUploadURL,
-      audioFileIsLoading,
-      audioFileLoadingProgress,
-      audioFileURL,
+      songAudioFileStorageTransactionInProgress,
+      songAudioFileStorageTransactionProgress,
+      songAudioUploadURL,
     }, 
     uploadSongDispatch
   ] = useUploadSongState();
@@ -86,9 +86,9 @@ const DashboardNewSong = () => {
     }
 
     if (fileType === fileUploaderTypes.SONG_AUDIO) {
-      uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_IS_LOADING, audioFileIsLoading: true });
-      uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_LOADING_PROGRESS, audioFileLoadingProgress: 0 });
-      uploadFileURL = audioFileURL;
+      uploadSongDispatch({ type: uploadSongActionType.SET_SONG_AUDIO_FILE_STORAGE_TRANSACTION_IN_PROGRESS, songAudioFileStorageTransactionInProgress: true });
+      uploadSongDispatch({ type: uploadSongActionType.SET_SONG_AUDIO_FILE_STORAGE_TRANSACTION_PROGRESS, songAudioFileStorageTransactionProgress: 0 });
+      uploadFileURL = songAudioUploadURL;
     }
 
     if (fileType === fileUploaderTypes.ARTIST_IMAGE) {
@@ -114,8 +114,8 @@ const DashboardNewSong = () => {
         }
 
         if (fileType === fileUploaderTypes.SONG_AUDIO) {
-          uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_IS_LOADING, audioFileIsLoading: false });
-          uploadSongDispatch({ type: uploadSongActionType.SET_AUDIO_FILE_URL, audioFileURL: null });
+          uploadSongDispatch({ type: uploadSongActionType.SET_SONG_AUDIO_FILE_STORAGE_TRANSACTION_IN_PROGRESS, songAudioFileStorageTransactionInProgress: false });
+          uploadSongDispatch({ type: uploadSongActionType.SET_SONG_AUDIO_UPLOAD_URL, songAudioUploadURL: null });
         }
 
         if (fileType === fileUploaderTypes.ARTIST_IMAGE) {
@@ -137,7 +137,7 @@ const DashboardNewSong = () => {
     const newSongToSave =  {
       name: songName,
       imageURL: songImageUploadURL,
-      songURL: audioFileURL,
+      songURL: songAudioUploadURL,
       album: albumDropDownSelection,
       artist: artistDropDownSelection,
       language: languageDropDownSelection,
@@ -212,7 +212,7 @@ const DashboardNewSong = () => {
   }
 
   const areAllSongFieldsPopulated = 
-    () => songName && artistDropDownSelection && languageDropDownSelection && categoryDropDownSelection && songImageUploadURL && audioFileURL;
+    () => songName && artistDropDownSelection && languageDropDownSelection && categoryDropDownSelection && songImageUploadURL && songAudioUploadURL;
 
   const areAllArtistFieldsPopulated = () => artistName && artistImageUploadURL && artistTwitter && artistInstagram;
 
@@ -257,12 +257,12 @@ const DashboardNewSong = () => {
         )}
       </div>
       <div className="bg-card backdrop-blur-md w-full h-300 rounded-md border-2 border-dotted border-gray-300 cursor-pointer">
-        {audioFileIsLoading && <FileLoader progress={audioFileLoadingProgress} />}
-        {!audioFileIsLoading && (
+        {songAudioFileStorageTransactionInProgress && <FileLoader progress={songAudioFileStorageTransactionProgress} />}
+        {!songAudioFileStorageTransactionInProgress && (
           <>
-            {audioFileURL ? 
+            {songAudioUploadURL ?
               <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-md">
-                <audio controls src={audioFileURL} />
+                <audio controls src={songAudioUploadURL} />
                 <button
                   type="button"
                   disabled={!!songDocumentCreationInProgress}
