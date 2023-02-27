@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import { MdDelete } from "react-icons/md";
 import { deleteSong, getAllSongs } from "../../../api";
 import { storage } from "../../../config/firebase.config";
-import { actionType } from "../../../context/ApplicationContext/reducer";
-import { useStateValue } from "../../../context/ApplicationContext/StateContext";
+import { actionType } from "../../../context/ApplicationContext/ApplicationReducer";
+import { useStateValue } from "../../../context/ApplicationContext/ApplicationStateContext";
 
 const SongCard = ({ data, index }) => {
   const { _, dispatch } = useStateValue();

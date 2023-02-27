@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { IoAdd, IoPause, IoPlay, IoTrash } from "react-icons/io5";
 import { TiDelete } from 'react-icons/ti';
-import { useStateValue } from '../../context/ApplicationContext/StateContext';
+import { useStateValue } from '../../context/ApplicationContext/ApplicationStateContext';
 import { getAllSongs } from '../../api';
-import { actionType } from '../../context/ApplicationContext/reducer';
+import { actionType } from '../../context/ApplicationContext/ApplicationReducer';
 import { SongCard } from '../Dashboard';
 
 const DashboardSongs = () => {
