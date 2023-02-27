@@ -10,13 +10,13 @@ import { SongCard } from '../Dashboard';
 const DashboardSongs = () => {
   const [songSearchText, setSongSearchText] = useState("");
   const [isInputFocused, setIsInputFocused] = useState(false);
-  const { state, dispatch } = useApplicationState();
+  const [{ allSongs }, applicationDispatch] = useApplicationState();
 
   useEffect(() => {
-    if (!state.allSongs) {
+    if (!allSongs) {
       getAllSongs()
         .then(songs => {
-          dispatch({ type: actionType.SET_ALL_SONGS, allSongs: songs.data ?? [] });
+          applicationDispatch({ type: actionType.SET_ALL_SONGS, allSongs: songs.data ?? [] });
         })
         .catch(error => console.log(error));
     }
@@ -36,10 +36,10 @@ const DashboardSongs = () => {
         {/* The count */}
         <div className='absolute top-4 left-4'>
           <p className='text-xl font-bold'>
-            <span className='text-sm font-semibold text-textColor'>Count: </span>{state.allSongs?.length ?? 0}
+            <span className='text-sm font-semibold text-textColor'>Count: </span>{allSongs?.length ?? 0}
           </p>
         </div>
-        <SongContainer songs={state.allSongs} />
+        <SongContainer songs={allSongs} />
       </div>
     </div>
   );

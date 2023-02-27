@@ -7,7 +7,7 @@ import { actionType } from "../../../context/ApplicationContext/ApplicationReduc
 import { useApplicationState } from "../../../context/ApplicationContext/ApplicationStateContext";
 
 const SongCard = ({ data, index }) => {
-  const { _, dispatch } = useApplicationState();
+  const [, applicationDispatch] = useApplicationState();
 
   const removeSong = async (songId, songImageURL, songAudioURL) => {
     if (!songId || !songImageURL || !songAudioURL) {
@@ -29,7 +29,7 @@ const SongCard = ({ data, index }) => {
 
       getAllSongs()
         .then(songs => {
-          dispatch({ type: actionType.SET_ALL_SONGS, allSongs: songs.data });
+          applicationDispatch({ type: actionType.SET_ALL_SONGS, allSongs: songs.data });
         })
         .catch(error => console.log(error));
     } catch (error) {

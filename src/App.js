@@ -11,7 +11,7 @@ import { actionType } from './context/ApplicationContext/ApplicationReducer';
 const App = () => {
   const firebaseAuth = getAuth(app);
   const navigate = useNavigate();
-  const {state, dispatch} = useApplicationState();
+  const [, applicationDispatch] = useApplicationState();
   const [auth, setAuth] = useState(window.localStorage.getItem("auth") === "true");
   
   useEffect(() => {
@@ -21,11 +21,11 @@ const App = () => {
         const data = await validateUser(token);
         setAuth(true);
         window.localStorage.setItem("auth", "true");
-        dispatch({ type: actionType.SET_USER, user: data.user });
+        applicationDispatch({ type: actionType.SET_USER, user: data.user });
       } else {
         setAuth(false);
         window.localStorage.setItem("auth", "false");
-        dispatch({ type: actionType.SET_USER, user: null });
+        applicationDispatch({ type: actionType.SET_USER, user: null });
         navigate("/login");
       }
     });

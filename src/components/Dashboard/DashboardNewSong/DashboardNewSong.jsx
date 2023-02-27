@@ -17,7 +17,8 @@ import { useUploadAlbumState } from "../../../context/UploadAlbumContext/UploadA
 import { uploadAlbumActionType } from "../../../context/UploadAlbumContext/UploadAlbumReducer";
 
 const DashboardNewSong = () => {
-  const { state, dispatch } = useApplicationState();
+  const [{ allArtists, allAlbums }, applicationDispatch] = useApplicationState();
+
   const [
     {
       songName,
@@ -59,18 +60,18 @@ const DashboardNewSong = () => {
   ] = useUploadAlbumState();
 
   useEffect(() => {
-    if (state.allArtists === null) {
+    if (allArtists === null) {
       getAllArtists()
         .then(artists => {
-          dispatch({ type: actionType.SET_ALL_ARTISTS, allArtists: artists.data });
+          applicationDispatch({ type: actionType.SET_ALL_ARTISTS, allArtists: artists.data });
         })
         .catch(error => console.log(error));
     }
 
-    if (state.allAlbums === null) {
+    if (allAlbums === null) {
       getAllAlbums()
         .then(albums => {
-          dispatch({ type: actionType.SET_ALL_ALBUMS, allAlbums: albums.data });
+          applicationDispatch({ type: actionType.SET_ALL_ALBUMS, allAlbums: albums.data });
         })
         .catch(error => console.log(error));
     }
@@ -153,7 +154,7 @@ const DashboardNewSong = () => {
 
       getAllSongs()
         .then(songs => {
-          dispatch({ type: actionType.SET_ALL_SONGS, allSongs: songs.data ?? [] });
+          applicationDispatch({ type: actionType.SET_ALL_SONGS, allSongs: songs.data ?? [] });
         })
         .catch(error => console.log(error));
     } catch (error) {
@@ -178,7 +179,7 @@ const DashboardNewSong = () => {
 
       getAllArtists()
         .then(artists => {
-          dispatch({ type: actionType.SET_ALL_ARTISTS, allArtists: artists.data ?? [] });
+          applicationDispatch({ type: actionType.SET_ALL_ARTISTS, allArtists: artists.data ?? [] });
         })
         .catch(error => console.log(error));
     } catch (error) {
@@ -202,7 +203,7 @@ const DashboardNewSong = () => {
 
       getAllAlbums()
         .then(albums => {
-          dispatch({ type: actionType.SET_ALL_ALBUMS, allAlbums: albums.data ?? [] });
+          applicationDispatch({ type: actionType.SET_ALL_ALBUMS, allAlbums: albums.data ?? [] });
         })
         .catch(error => console.log(error));
     } catch (error) {
@@ -230,8 +231,8 @@ const DashboardNewSong = () => {
         disabled={!!songDocumentCreationInProgress}
       />
       <div className="flex w-full justify-between flex-wrap items-center gap-4">
-        <FilterButtons filterData={state.allArtists} flag={"Artist"} />
-        <FilterButtons filterData={state.allAlbums} flag={"Album"} />
+        <FilterButtons filterData={allArtists} flag={"Artist"} />
+        <FilterButtons filterData={allAlbums} flag={"Album"} />
         <FilterButtons filterData={filterByLanguage} flag={"Language"} />
         <FilterButtons filterData={filterByCategory} flag={"Category"} />
       </div>

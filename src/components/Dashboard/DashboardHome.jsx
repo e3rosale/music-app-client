@@ -20,37 +20,37 @@ export const DashboardCard = ({icon, name, count}) => {
 }
 
 const DashboardHome = () => {
-  const { state, dispatch } = useApplicationState();
+  const [{ allUsers, allArtists, allAlbums, allSongs }, applicationDispatch] = useApplicationState();
 
   useEffect(() => {
-    if (!state.allUsers) {
+    if (!allUsers) {
       getAllUsers()
         .then(users => {
-          dispatch({ type: actionType.SET_ALL_USERS, allUsers: users.data ?? [] });
+          applicationDispatch({ type: actionType.SET_ALL_USERS, allUsers: users.data ?? [] });
         })
         .catch(error => console.log(error));
     }
 
-    if (!state.allArtists) {
+    if (!allArtists) {
       getAllArtists()
         .then(artists => {
-          dispatch({ type: actionType.SET_ALL_ARTISTS, allArtists: artists.data ?? [] });
+          applicationDispatch({ type: actionType.SET_ALL_ARTISTS, allArtists: artists.data ?? [] });
         })
         .catch(error => console.log(error));
     }
 
-    if (!state.allAlbums) {
+    if (!allAlbums) {
       getAllAlbums()
         .then(albums => {
-          dispatch({ type: actionType.SET_ALL_ALBUMS, allAlbums: albums.data ?? [] });
+          applicationDispatch({ type: actionType.SET_ALL_ALBUMS, allAlbums: albums.data ?? [] });
         })
         .catch(error => console.log(error));
     }
 
-    if (!state.allSongs) {
+    if (!allSongs) {
       getAllSongs()
         .then(songs => {
-          dispatch({ type: actionType.SET_ALL_SONGS, allSongs: songs.data ?? [] });
+          applicationDispatch({ type: actionType.SET_ALL_SONGS, allSongs: songs.data ?? [] });
         })
         .catch(error => console.log(error));
     }
@@ -58,10 +58,10 @@ const DashboardHome = () => {
 
   return (
     <div className='w-full p-6 flex items-center justify-evenly flex-wrap'>
-      <DashboardCard icon={<FaUser className='text-3xl text-textColor'/>} name={"Users"} count={state.allUsers?.length ?? 0}/>
-      <DashboardCard icon={<GiLoveSong className='text-3xl text-textColor'/>} name={"Songs"} count={state.allSongs?.length ?? 0}/>
-      <DashboardCard icon={<RiUserStarFill className="text-3xl text-textColor"/>} name={"Artists"} count={state.allArtists?.length ?? 0}/>
-      <DashboardCard icon={<GiMusicalNotes className='text-3xl text-textColor'/>} name={"Albums"} count={state.allAlbums?.length ?? 0}/>
+      <DashboardCard icon={<FaUser className='text-3xl text-textColor'/>} name={"Users"} count={allUsers?.length ?? 0}/>
+      <DashboardCard icon={<GiLoveSong className='text-3xl text-textColor'/>} name={"Songs"} count={allSongs?.length ?? 0}/>
+      <DashboardCard icon={<RiUserStarFill className="text-3xl text-textColor"/>} name={"Artists"} count={allArtists?.length ?? 0}/>
+      <DashboardCard icon={<GiMusicalNotes className='text-3xl text-textColor'/>} name={"Albums"} count={allAlbums?.length ?? 0}/>
     </div>
   );
 }

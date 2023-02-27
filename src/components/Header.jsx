@@ -8,7 +8,7 @@ import { app } from '../config/firebase.config';
 import { motion } from 'framer-motion';
 
 const Header = () => {
-  const { state } = useApplicationState();
+  const [{ user }] = useApplicationState();
   const firebaseAuth = getAuth(app);
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
@@ -34,9 +34,9 @@ const Header = () => {
       </ul>
 
       <div className='flex items-center ml-auto cursor-pointer gap-2 relative' onMouseEnter={() => setMenuIsOpen(true)} onMouseLeave={() => setMenuIsOpen(false)}>
-        {state.user?.imageURL && <img src={state.user?.imageURL} className='w-12 min-w-[44px] object-cover rounded-full shadow-lg' alt='Image of user' referrerPolicy='no-referrer'/>}
+        {user?.imageURL && <img src={user?.imageURL} className='w-12 min-w-[44px] object-cover rounded-full shadow-lg' alt='Image of user' referrerPolicy='no-referrer'/>}
         <div className='flex flex-col'>
-          <p className='text-textColor text-lg hover:text-headingColor font-semibold'>{state.user?.name ?? 'User' }</p>
+          <p className='text-textColor text-lg hover:text-headingColor font-semibold'>{user?.name ?? 'User' }</p>
           <p className='flex items-center gap-2 text-xs text-gray-500 font-normal'>Premium Member.</p>
         </div>
         {menuIsOpen && (
@@ -50,7 +50,7 @@ const Header = () => {
               <p className='text-base text-textColor hover:font-semibold duration-150 transition-all ease-in-out'>Profile</p>
             </NavLink>
             <p className='text-base text-textColor hover:font-semibold duration-150 transition-all ease-in-out'>My favorites</p>
-            {state.user?.role === "admin" && (
+            {user?.role === "admin" && (
               <>
                 <hr />
                 <NavLink to={'/dashboard/home'}>

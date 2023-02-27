@@ -8,16 +8,16 @@ import { MdDelete } from "react-icons/md";
 import { useEffect } from "react";
 
 const DashboardUsers = () => {
-  const { state, dispatch } = useApplicationState();
+  const [{ user, allUsers }, applicationDispatch] = useApplicationState();
 
   useEffect(() => {
-    if (state.allUsers) {
+    if (allUsers) {
       return;
     }
 
     getAllUsers()
       .then(users => {
-        dispatch({ type: actionType.SET_ALL_USERS, allUsers: users.data });
+        applicationDispatch({ type: actionType.SET_ALL_USERS, allUsers: users.data });
       })
       .catch(error => console.log(error));
   }, []);
@@ -30,7 +30,7 @@ const DashboardUsers = () => {
       <div className="relative w-full py-12 min-h-[400px] overflow-x-scroll my-4 flex flex-col items-center justify-start p-4 border border-gray-300 rounded-md gap-3">
         {/* total count of the user */}
         <div className="absolute top-4 left-4">
-          <p className="text-sm font-semibold">Count: <span className="text-xl font-bold text-textColor">{state.allUsers?.length ?? 0}</span></p>
+          <p className="text-sm font-semibold">Count: <span className="text-xl font-bold text-textColor">{allUsers?.length ?? 0}</span></p>
         </div>
         {/* table data */}
         <div className="w-full min-w-[750px] flex items-center justify-between">
@@ -43,7 +43,7 @@ const DashboardUsers = () => {
         </div>
 
         {/* table body content */}
-        {state.allUsers?.map((user, index) => <DashboardUserCard data={user} key={index} isNotCurrentUser={user.user_id !== state.user?.user_id} />)}
+        {allUsers?.map((_user, index) => <DashboardUserCard data={_user} key={index} isNotCurrentUser={_user.user_id !== user?.user_id} />)}
       </div>
     </div>
   );
@@ -52,7 +52,7 @@ const DashboardUsers = () => {
 export const DashboardUserCard = ({ data, isNotCurrentUser }) => {
   const createdAt = moment(new Date(data.createdAt)).format("MMMM Do YYYY");
   const [isOpen, setIsOpen] = useState(false);
-  const { dispatch } = useApplicationState();
+  const [, applicationDispatch] = useApplicationState();
 
   const updateUserRole = async (userId, role) => {
     setIsOpen(false);
@@ -66,7 +66,7 @@ export const DashboardUserCard = ({ data, isNotCurrentUser }) => {
 
       try {
         const users = await getAllUsers();
-        dispatch({ type: actionType.SET_ALL_USERS, allUsers: users.data ?? [] });
+        applicationDispatch({ type: actionType.SET_ALL_USERS, allUsers: users.data ?? [] });
       } catch (error) {
         console.log(error);
       }
@@ -87,7 +87,7 @@ export const DashboardUserCard = ({ data, isNotCurrentUser }) => {
 
       try {
         const users = await getAllUsers();
-        dispatch({ type: actionType.SET_ALL_USERS, allUsers: users.data ?? [] });
+        applicationDispatch({ type: actionType.SET_ALL_USERS, allUsers: users.data ?? [] });
       } catch (error) {
         console.log(error);
       }
