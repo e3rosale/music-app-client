@@ -2,16 +2,16 @@ import React, { createContext, useContext, useReducer } from 'react';
 import { initialState } from './ApplicationInitialState';
 import reducer from './ApplicationReducer';
 
-export const StateContext = createContext(null);
+const ApplicationContext = createContext();
 
 export const ApplicationStateProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   
   return (
-    <StateContext.Provider value={{ state, dispatch }}>
+    <ApplicationContext.Provider value={{ state, dispatch }}>
       {children}
-    </StateContext.Provider>
+    </ApplicationContext.Provider>
   );
 };
 
-export const useStateValue = () => useContext(StateContext);
+export const useStateValue = () => useContext(ApplicationContext);
