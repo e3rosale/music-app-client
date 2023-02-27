@@ -4,7 +4,7 @@ import reducer from './ApplicationReducer';
 
 export const StateContext = createContext(null);
 
-export const StateProvider = ({ children }) => {
+export const ApplicationStateProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   
   return (

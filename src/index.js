@@ -5,15 +5,15 @@ import "./index.css";
 import App from "./App";
 
 import { BrowserRouter as Router } from "react-router-dom";
-import { StateProvider } from "./context/ApplicationContext/ApplicationStateContext";
+import { ApplicationStateProvider } from "./context/ApplicationContext/ApplicationStateContext";
 
 const root = createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Router>
-      <StateProvider>
+      <ApplicationStateProvider>
         <App />
-      </StateProvider>
+      </ApplicationStateProvider>
     </Router>
   </React.StrictMode>
 );
