@@ -1,4 +1,4 @@
-export const initialState = {
+export const initialApplicationState = {
   user: null,
   allUsers: null,
   allSongs: null,

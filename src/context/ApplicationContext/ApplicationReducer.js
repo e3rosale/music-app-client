@@ -6,7 +6,7 @@ export const actionType = {
   SET_ALL_ALBUMS: 'SET_ALL_ALBUMS',
 };
 
-const reducer = (state, action) => {
+export const applicationReducer = (state, action) => {
   console.log(action);
 
   switch (action.type) {
@@ -39,5 +39,3 @@ const reducer = (state, action) => {
       throw new Error('Unknown action: ' + action.type);
   }
 };
-
-export default reducer;
