@@ -16,9 +16,9 @@ export const fileUploaderTypes = {
 }
 
 const FileUploader = ({ fileType }) => {
-  const [{}, uploadSongDispatch] = useUploadSongState();
-  const [{}, uploadArtistDispatch] = useUploadArtistState();
-  const [{}, uploadAlbumDispatch] = useUploadAlbumState();
+  const [, uploadSongDispatch] = useUploadSongState();
+  const [, uploadArtistDispatch] = useUploadArtistState();
+  const [, uploadAlbumDispatch] = useUploadAlbumState();
 
   let fileTypeText;
   let inputTypeAcceptAttributes;
