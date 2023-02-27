@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useStateValue } from "../../../context/StateContext";
+import { useStateValue } from "../../../context/ApplicationContext/StateContext";
 import { filterByCategory, filterByLanguage } from "../../../utils/supportFunctions";
 import { FilterButtons } from "..";
 import { getAllAlbums, getAllArtists, getAllSongs, uploadAlbum, uploadArtist, uploadSong } from '../../../api';
-import { actionType } from "../../../context/reducer";
+import { actionType } from "../../../context/ApplicationContext/reducer";
 import { deleteObject, ref } from "firebase/storage";
 import { storage } from "../../../config/firebase.config";
 import { MdDelete } from "react-icons/md";

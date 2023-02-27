@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Logo } from "../assets/img";
 import { isActiveStyles, isNotActiveStyles } from '../utils/styles';
-import { useStateValue } from '../context/StateContext';
+import { useStateValue } from '../context/ApplicationContext/StateContext';
 import { getAuth } from 'firebase/auth';
 import { app } from '../config/firebase.config';
 import { motion } from 'framer-motion';

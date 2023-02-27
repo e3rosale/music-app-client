@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { motion } from 'framer-motion';
-import { useStateValue } from "../../context/StateContext";
+import { useStateValue } from "../../context/ApplicationContext/StateContext";
 import moment from 'moment';
 import { changeUserRole, deleteUser, getAllUsers } from "../../api";
-import { actionType } from "../../context/reducer";
+import { actionType } from "../../context/ApplicationContext/reducer";
 import { MdDelete } from "react-icons/md";
 import { useEffect } from "react";
 

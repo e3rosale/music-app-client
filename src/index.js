@@ -5,7 +5,7 @@ import "./index.css";
 import App from "./App";
 
 import { BrowserRouter as Router } from "react-router-dom";
-import { StateProvider } from "./context/StateContext";
+import { StateProvider } from "./context/ApplicationContext/StateContext";
 
 const root = createRoot(document.getElementById('root'));
 root.render(
