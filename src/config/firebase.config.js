@@ -1,4 +1,5 @@
-import { getApp, getApps, initializeApp } from 'firebase/app';
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
@@ -10,5 +11,7 @@ const firebaseConfig = {
     appId: process.env.REACT_APP_FIREBASE_APP_ID
 };
 
-export const app = getApps.length > 0 ? getApp() : initializeApp(firebaseConfig);
+// Initialize Firebase Authentication and get a reference to the service
+export const app = initializeApp(firebaseConfig);
+export const firebaseAuth = getAuth(app);
 export const storage = getStorage(app);

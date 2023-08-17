@@ -3,13 +3,11 @@ import { NavLink } from 'react-router-dom';
 import { Logo } from "../assets/img";
 import { isActiveStyles, isNotActiveStyles } from '../utils/styles';
 import { useApplicationState } from '../context/ApplicationContext/ApplicationStateContext';
-import { getAuth } from 'firebase/auth';
-import { app } from '../config/firebase.config';
+import { firebaseAuth } from '../config/firebase.config';
 import { motion } from 'framer-motion';
 
 const Header = () => {
   const [{ user }] = useApplicationState();
-  const firebaseAuth = getAuth(app);
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
   const logOut = async () => {

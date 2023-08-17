@@ -1,15 +1,13 @@
-import { getAuth } from 'firebase/auth';
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { Login, Home, Dashboard } from './components';
-import { app } from './config/firebase.config';
+import { firebaseAuth } from './config/firebase.config';
 import { AnimatePresence } from 'framer-motion';
 import { validateUser } from './api';
 import { useApplicationState } from './context/ApplicationContext/ApplicationStateContext';
 import { actionType } from './context/ApplicationContext/ApplicationReducer';
 
 const App = () => {
-  const firebaseAuth = getAuth(app);
   const navigate = useNavigate();
   const [, applicationDispatch] = useApplicationState();
   const [auth, setAuth] = useState(window.localStorage.getItem("auth") === "true");

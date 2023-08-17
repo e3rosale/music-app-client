@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
-import { app } from '../config/firebase.config';
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { firebaseAuth } from '../config/firebase.config';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { FcGoogle } from 'react-icons/fc';
 import { useNavigate } from "react-router-dom";
 import { LoginBg } from "../assets/video";
 
 const Login = () => {
-  const firebaseAuth = getAuth(app);
   const provider = new GoogleAuthProvider();
 
   const navigate = useNavigate();
